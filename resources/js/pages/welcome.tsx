@@ -1165,7 +1165,7 @@ export default function Welcome({
                         >
                             <a
                                 href="#work"
-                                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#c6ff4a] px-6 py-4 text-sm font-black text-[#151614] shadow-[6px_6px_0_#151614] transition hover:-translate-y-0.5"
+                                className="theme-primary-cta inline-flex items-center justify-center gap-2 rounded-full bg-[#c6ff4a] px-6 py-4 text-sm font-black text-[#151614] shadow-[6px_6px_0_#151614] transition hover:-translate-y-0.5"
                             >
                                 View selected work
                                 <ChevronRight className="size-4" />

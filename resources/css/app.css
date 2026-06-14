@@ -363,6 +363,32 @@
         box-shadow: 6px 6px 0 var(--theme-secondary) !important;
     }
 
+    .portfolio-theme-playground .theme-primary-cta {
+        border: 2px solid color-mix(in srgb, var(--theme-ink) 82%, #000);
+        background:
+            linear-gradient(
+                135deg,
+                color-mix(in srgb, var(--theme-accent) 82%, #ffffff),
+                color-mix(
+                    in srgb,
+                    var(--theme-secondary) 38%,
+                    var(--theme-accent)
+                )
+            ),
+            var(--theme-accent) !important;
+        box-shadow:
+            7px 7px 0 color-mix(in srgb, var(--theme-ink) 86%, #000),
+            0 14px 34px color-mix(in srgb, var(--theme-accent) 28%, transparent) !important;
+        color: color-mix(in srgb, var(--theme-ink) 92%, #000) !important;
+    }
+
+    .dark .portfolio-theme-playground .theme-primary-cta {
+        border-color: color-mix(in srgb, var(--theme-accent) 55%, #ffffff);
+        box-shadow:
+            7px 7px 0 color-mix(in srgb, var(--theme-secondary) 60%, #000),
+            0 14px 34px color-mix(in srgb, var(--theme-accent) 30%, transparent) !important;
+    }
+
     .theme-settings-panel {
         border-color: color-mix(in srgb, var(--theme-ink) 20%, transparent);
     }
