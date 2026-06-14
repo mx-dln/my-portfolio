@@ -1,4 +1,5 @@
 deployment:
   tasks:
+    - export REPOPATH=/home/kaeldeleon0128/repositories/my-portfolio
     - export DEPLOYPATH=/home/kaeldeleon0128/public_html
-    - /bin/cp -R public/. $DEPLOYPATH
+    - /bin/cp -R $REPOPATH/public/. $DEPLOYPATH
