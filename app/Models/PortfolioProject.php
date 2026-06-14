@@ -38,6 +38,12 @@ class PortfolioProject extends Model
             return null;
         }
 
-        return '/storage/'.ltrim(str_replace('\\', '/', $this->logo_path), '/');
+        $path = ltrim(str_replace('\\', '/', $this->logo_path), '/');
+
+        if (str_starts_with($path, 'assets/')) {
+            return '/'.$path;
+        }
+
+        return '/storage/'.$path;
     }
 }

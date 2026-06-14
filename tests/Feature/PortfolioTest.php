@@ -135,4 +135,25 @@ class PortfolioTest extends TestCase
         $this->assertStringEndsWith('.svg', $project->logo_path);
         Storage::disk('public')->assertExists($project->logo_path);
     }
+
+    public function test_project_asset_logo_uses_public_asset_url(): void
+    {
+        $project = PortfolioProject::query()->create([
+            'title' => 'Static Logo Project',
+            'category' => 'Business System',
+            'year' => '2026',
+            'logo_path' => 'assets/image/project-logos/tcr-airconditioning.png',
+            'summary' => 'A project using a committed logo asset.',
+            'impact' => 'Keeps curated logos available without uploads.',
+            'stack' => ['Laravel'],
+            'status' => 'Live',
+            'featured' => false,
+            'sort_order' => 99,
+        ]);
+
+        $this->assertSame(
+            '/assets/image/project-logos/tcr-airconditioning.png',
+            $project->logo_url,
+        );
+    }
 }
