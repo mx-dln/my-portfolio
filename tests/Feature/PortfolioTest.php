@@ -34,6 +34,31 @@ class PortfolioTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_authenticated_user_can_open_portfolio_inbox_feed(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $conversation = PortfolioConversation::query()->create([
+            'visitor_name' => 'Client Example',
+            'visitor_email' => 'client@example.com',
+            'last_message_at' => now(),
+        ]);
+
+        $conversation->messages()->create([
+            'sender' => 'visitor',
+            'body' => 'Do you build Laravel dashboards?',
+        ]);
+
+        $response = $this->get(route('admin.inbox.feed'));
+
+        $response
+            ->assertOk()
+            ->assertJsonFragment([
+                'visitor_email' => 'client@example.com',
+                'body' => 'Do you build Laravel dashboards?',
+            ]);
+    }
+
     public function test_visitor_can_start_a_portfolio_chat(): void
     {
         $response = $this->postJson(route('portfolio.chat.store'), [

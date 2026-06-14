@@ -1,5 +1,14 @@
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, Github, Globe2, LayoutGrid } from 'lucide-react';
+import {
+    BriefcaseBusiness,
+    FolderKanban,
+    Github,
+    Globe2,
+    Link2,
+    MessageCircle,
+    Network,
+    UserRound,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -13,19 +22,43 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Portfolio Studio',
+        title: 'Overview',
         href: '/admin/portfolio',
         icon: BriefcaseBusiness,
+    },
+    {
+        title: 'Hero',
+        href: '/admin/hero',
+        icon: UserRound,
+    },
+    {
+        title: 'Projects',
+        href: '/admin/projects',
+        icon: FolderKanban,
+    },
+    {
+        title: 'Capability Map',
+        href: '/admin/capability-map',
+        icon: Network,
+    },
+    {
+        title: 'Experience',
+        href: '/admin/experience',
+        icon: BriefcaseBusiness,
+    },
+    {
+        title: 'Links & Contact',
+        href: '/admin/contact',
+        icon: Link2,
+    },
+    {
+        title: 'Inbox',
+        href: '/admin/inbox',
+        icon: MessageCircle,
     },
     {
         title: 'View Website',
@@ -49,7 +82,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/admin/portfolio" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

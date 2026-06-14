@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import {
     ArrowUpRight,
     BriefcaseBusiness,
@@ -22,7 +22,34 @@ import {
     Sparkles,
     X,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+    siArduino,
+    siDocker,
+    siFacebook,
+    siFlutter,
+    siGit,
+    siGithub,
+    siInstagram,
+    siJavascript,
+    siLangchain,
+    siLaravel,
+    siLeaflet,
+    siMapbox,
+    siMysql,
+    siNodedotjs,
+    siOllama,
+    siOpenstreetmap,
+    siPhp,
+    siPython,
+    siRaspberrypi,
+    siReact,
+    siStripe,
+    siTailwindcss,
+    siTypescript,
+    siVuedotjs,
+    type SimpleIcon,
+} from 'simple-icons';
 import AppLogoIcon from '@/components/app-logo-icon';
 
 type Metric = {
@@ -46,6 +73,8 @@ type PortfolioProfile = {
     website_url?: string | null;
     github_url?: string | null;
     linkedin_url?: string | null;
+    facebook_url?: string | null;
+    instagram_url?: string | null;
     availability?: string | null;
     metrics?: Metric[] | null;
     services?: Service[] | null;
@@ -112,14 +141,171 @@ If you have a project in mind, a collaboration opportunity, or simply want to di
 
 I look forward to hearing from you.`;
 
-const techIconStyles = [
-    { keywords: ['laravel'], label: 'Lv', bg: '#fff0ed', fg: '#ff2d20' },
-    { keywords: ['react'], label: 'Re', bg: '#e8fbff', fg: '#149eca' },
-    { keywords: ['flutter'], label: 'Fl', bg: '#edf6ff', fg: '#0468d7' },
-    { keywords: ['php'], label: 'PHP', bg: '#eeefff', fg: '#4f5b93' },
-    { keywords: ['python'], label: 'Py', bg: '#fff7df', fg: '#3776ab' },
-    { keywords: ['mysql'], label: 'SQL', bg: '#eaf6ff', fg: '#00618a' },
-    { keywords: ['tailwind'], label: 'Tw', bg: '#e8fffb', fg: '#0f9f9a' },
+const chatSoundUrl = '/assets/sound/chat-sound.mp3';
+
+type TechIconStyle = {
+    keywords: string[];
+    label: string;
+    bg: string;
+    fg: string;
+    icon?: SimpleIcon;
+};
+
+const techIconStyles: TechIconStyle[] = [
+    {
+        keywords: ['laravel'],
+        label: 'Laravel',
+        bg: '#fff0ed',
+        fg: '#ff2d20',
+        icon: siLaravel,
+    },
+    {
+        keywords: ['react'],
+        label: 'React',
+        bg: '#e8fbff',
+        fg: '#149eca',
+        icon: siReact,
+    },
+    {
+        keywords: ['flutter'],
+        label: 'Flutter',
+        bg: '#edf6ff',
+        fg: '#0468d7',
+        icon: siFlutter,
+    },
+    {
+        keywords: ['php'],
+        label: 'PHP',
+        bg: '#eeefff',
+        fg: '#4f5b93',
+        icon: siPhp,
+    },
+    {
+        keywords: ['python'],
+        label: 'Python',
+        bg: '#fff7df',
+        fg: '#3776ab',
+        icon: siPython,
+    },
+    {
+        keywords: ['mysql'],
+        label: 'MySQL',
+        bg: '#eaf6ff',
+        fg: '#00618a',
+        icon: siMysql,
+    },
+    {
+        keywords: ['tailwind'],
+        label: 'Tailwind CSS',
+        bg: '#e8fffb',
+        fg: '#06b6d4',
+        icon: siTailwindcss,
+    },
+    {
+        keywords: ['javascript'],
+        label: 'JavaScript',
+        bg: '#fff9d9',
+        fg: '#b59b00',
+        icon: siJavascript,
+    },
+    {
+        keywords: ['typescript'],
+        label: 'TypeScript',
+        bg: '#eaf2ff',
+        fg: '#3178c6',
+        icon: siTypescript,
+    },
+    {
+        keywords: ['node'],
+        label: 'Node.js',
+        bg: '#edf8ea',
+        fg: '#5fa04e',
+        icon: siNodedotjs,
+    },
+    {
+        keywords: ['vue'],
+        label: 'Vue',
+        bg: '#eafaf2',
+        fg: '#42b883',
+        icon: siVuedotjs,
+    },
+    {
+        keywords: ['docker'],
+        label: 'Docker',
+        bg: '#edf7ff',
+        fg: '#2496ed',
+        icon: siDocker,
+    },
+    {
+        keywords: ['github'],
+        label: 'GitHub',
+        bg: '#f4f4f5',
+        fg: '#181717',
+        icon: siGithub,
+    },
+    {
+        keywords: ['git'],
+        label: 'Git',
+        bg: '#fff1ed',
+        fg: '#f05032',
+        icon: siGit,
+    },
+    {
+        keywords: ['langchain'],
+        label: 'LangChain',
+        bg: '#eef8f2',
+        fg: '#1c3c3c',
+        icon: siLangchain,
+    },
+    {
+        keywords: ['ollama'],
+        label: 'Ollama',
+        bg: '#f4f4f5',
+        fg: '#000000',
+        icon: siOllama,
+    },
+    {
+        keywords: ['raspberry'],
+        label: 'Raspberry Pi',
+        bg: '#fff0f4',
+        fg: '#a22846',
+        icon: siRaspberrypi,
+    },
+    {
+        keywords: ['arduino'],
+        label: 'Arduino',
+        bg: '#e8fbfb',
+        fg: '#00878f',
+        icon: siArduino,
+    },
+    {
+        keywords: ['stripe', 'payment'],
+        label: 'Stripe',
+        bg: '#f0edff',
+        fg: '#635bff',
+        icon: siStripe,
+    },
+    {
+        keywords: ['mapbox'],
+        label: 'Mapbox',
+        bg: '#eef6ff',
+        fg: '#000000',
+        icon: siMapbox,
+    },
+    {
+        keywords: ['leaflet'],
+        label: 'Leaflet',
+        bg: '#ecfdf3',
+        fg: '#199900',
+        icon: siLeaflet,
+    },
+    {
+        keywords: ['openstreetmap'],
+        label: 'OpenStreetMap',
+        bg: '#ecfdf3',
+        fg: '#7ebc6f',
+        icon: siOpenstreetmap,
+    },
     { keywords: ['api'], label: 'API', bg: '#eef6ed', fg: '#2d6a4f' },
     {
         keywords: ['ai', 'openai', 'ollama', 'langchain'],
@@ -133,13 +319,7 @@ const techIconStyles = [
         bg: '#ecfdf3',
         fg: '#16803c',
     },
-    {
-        keywords: ['iot', 'raspberry', 'kiosk'],
-        label: 'IoT',
-        bg: '#fff4e6',
-        fg: '#c2410c',
-    },
-    { keywords: ['payment'], label: 'Pay', bg: '#f3f5f0', fg: '#151614' },
+    { keywords: ['iot', 'kiosk'], label: 'IoT', bg: '#fff4e6', fg: '#c2410c' },
     { keywords: ['sms'], label: 'SMS', bg: '#fef2f2', fg: '#dc2626' },
 ];
 
@@ -162,6 +342,7 @@ function techIconFor(name: string) {
         .toUpperCase();
 
     return {
+        keywords: [],
         label: label || name.slice(0, 2).toUpperCase(),
         bg: '#f4f7ef',
         fg: '#151614',
@@ -175,9 +356,34 @@ function TechIcon({ name }: { name: string }) {
         <span
             className="grid size-11 shrink-0 place-items-center rounded-2xl text-[0.68rem] font-black tracking-[-0.03em] shadow-[inset_0_0_0_1px_rgba(21,22,20,0.08)]"
             style={{ backgroundColor: icon.bg, color: icon.fg }}
+            title={icon.label}
         >
-            {icon.label}
+            {icon.icon ? (
+                <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="size-6"
+                    fill="currentColor"
+                >
+                    <path d={icon.icon.path} />
+                </svg>
+            ) : (
+                icon.label
+            )}
         </span>
+    );
+}
+
+function BrandIcon({ icon }: { icon: SimpleIcon }) {
+    return (
+        <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="size-4"
+            fill="currentColor"
+        >
+            <path d={icon.path} />
+        </svg>
     );
 }
 
@@ -212,9 +418,6 @@ export default function Welcome({
     experiences,
     skillGroups,
 }: WelcomeProps) {
-    const { auth } = usePage().props as unknown as {
-        auth: { user?: { name: string } | null };
-    };
     const [menuOpen, setMenuOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [activeCapabilityIndex, setActiveCapabilityIndex] = useState(0);
@@ -228,6 +431,13 @@ export default function Welcome({
     const [chatBody, setChatBody] = useState('');
     const [chatSending, setChatSending] = useState(false);
     const [chatError, setChatError] = useState<string | null>(null);
+    const [chatUnreadCount, setChatUnreadCount] = useState(0);
+    const [chatHasOlderMessages, setChatHasOlderMessages] = useState(false);
+    const [chatLoadingOlder, setChatLoadingOlder] = useState(false);
+    const chatMessageIdsRef = useRef<Set<number>>(new Set());
+    const chatSoundRef = useRef<HTMLAudioElement | null>(null);
+    const chatThreadRef = useRef<HTMLDivElement | null>(null);
+    const shouldScrollChatToBottomRef = useRef(true);
 
     const metrics = profile.metrics ?? [];
     const services = profile.services ?? [];
@@ -303,8 +513,34 @@ export default function Welcome({
         ['Contact', '#contact'],
     ];
 
-    async function loadChat(uuid: string) {
-        const response = await fetch(`/portfolio-chat/${uuid}`, {
+    function playChatSound() {
+        chatSoundRef.current ??= new Audio(chatSoundUrl);
+        chatSoundRef.current.currentTime = 0;
+        void chatSoundRef.current.play().catch(() => undefined);
+    }
+
+    function mergeChatMessages(
+        currentMessages: ChatMessage[],
+        nextMessages: ChatMessage[],
+    ) {
+        return [...currentMessages, ...nextMessages]
+            .filter(
+                (message, index, messages) =>
+                    messages.findIndex((item) => item.id === message.id) ===
+                    index,
+            )
+            .sort((a, b) => a.id - b.id);
+    }
+
+    async function loadChat(
+        uuid: string,
+        notify = true,
+        beforeId: number | null = null,
+    ) {
+        const url = beforeId
+            ? `/portfolio-chat/${uuid}?before_id=${beforeId}`
+            : `/portfolio-chat/${uuid}`;
+        const response = await fetch(url, {
             headers: { Accept: 'application/json' },
             credentials: 'same-origin',
         });
@@ -318,8 +554,49 @@ export default function Welcome({
             messages: ChatMessage[];
         };
 
+        const previousIds = chatMessageIdsRef.current;
+        const messages = data.messages ?? [];
+        const newAdminMessages = messages.filter(
+            (message) =>
+                message.sender === 'admin' && !previousIds.has(message.id),
+        );
+
+        if (notify && previousIds.size > 0 && newAdminMessages.length > 0) {
+            playChatSound();
+            setChatUnreadCount((count) =>
+                chatOpen ? 0 : count + newAdminMessages.length,
+            );
+            shouldScrollChatToBottomRef.current = chatOpen;
+        }
+
         setConversationUuid(data.conversation_uuid);
-        setChatMessages(data.messages ?? []);
+        setChatHasOlderMessages(messages.length === 10);
+        setChatMessages((currentMessages) => {
+            const nextMessages = beforeId
+                ? mergeChatMessages(messages, currentMessages)
+                : mergeChatMessages(currentMessages, messages);
+
+            chatMessageIdsRef.current = new Set(
+                nextMessages.map((message) => message.id),
+            );
+
+            return nextMessages;
+        });
+    }
+
+    async function loadOlderChatMessages() {
+        if (!conversationUuid || !chatMessages.length || chatLoadingOlder) {
+            return;
+        }
+
+        setChatLoadingOlder(true);
+        shouldScrollChatToBottomRef.current = false;
+
+        try {
+            await loadChat(conversationUuid, false, chatMessages[0].id);
+        } finally {
+            setChatLoadingOlder(false);
+        }
     }
 
     async function sendChatMessage() {
@@ -365,8 +642,14 @@ export default function Welcome({
                 'portfolio-chat-conversation',
                 data.conversation_uuid,
             );
+            chatMessageIdsRef.current = new Set(
+                (data.messages ?? []).map((message) => message.id),
+            );
+            shouldScrollChatToBottomRef.current = true;
             setConversationUuid(data.conversation_uuid);
             setChatMessages(data.messages ?? []);
+            setChatHasOlderMessages((data.messages ?? []).length === 10);
+            setChatUnreadCount(0);
             setChatBody('');
         } catch (error) {
             setChatError(
@@ -392,21 +675,42 @@ export default function Welcome({
 
         if (storedUuid) {
             setConversationUuid(storedUuid);
-            void loadChat(storedUuid);
+            shouldScrollChatToBottomRef.current = true;
+            void loadChat(storedUuid, false);
         }
     }, []);
 
     useEffect(() => {
-        if (!chatOpen || !conversationUuid) {
+        if (!conversationUuid) {
             return;
         }
 
         const interval = window.setInterval(() => {
             void loadChat(conversationUuid);
-        }, 12000);
+        }, 5000);
 
         return () => window.clearInterval(interval);
-    }, [chatOpen, conversationUuid]);
+    }, [conversationUuid, chatOpen]);
+
+    useEffect(() => {
+        if (chatOpen) {
+            setChatUnreadCount(0);
+            shouldScrollChatToBottomRef.current = true;
+        }
+    }, [chatOpen]);
+
+    useEffect(() => {
+        if (!chatOpen || !shouldScrollChatToBottomRef.current) {
+            return;
+        }
+
+        window.requestAnimationFrame(() => {
+            if (chatThreadRef.current) {
+                chatThreadRef.current.scrollTop =
+                    chatThreadRef.current.scrollHeight;
+            }
+        });
+    }, [chatOpen, chatMessages]);
 
     useEffect(() => {
         const updatePointer = (event: PointerEvent) => {
@@ -521,14 +825,6 @@ export default function Welcome({
                         </nav>
 
                         <div className="hidden items-center gap-3 lg:flex">
-                            {auth.user ? (
-                                <Link
-                                    href="/admin/portfolio"
-                                    className="rounded-full border border-[#151614]/15 bg-white px-4 py-2 text-sm font-bold text-[#151614] transition hover:border-[#151614]"
-                                >
-                                    Dashboard
-                                </Link>
-                            ) : null}
                             <a
                                 href={`mailto:${profile.email}`}
                                 className="inline-flex items-center gap-2 rounded-full bg-[#151614] px-5 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#1ed6c4] transition hover:-translate-y-0.5"
@@ -565,14 +861,6 @@ export default function Welcome({
                                         {label}
                                     </a>
                                 ))}
-                                {auth.user ? (
-                                    <Link
-                                        href="/admin/portfolio"
-                                        className="rounded-xl border border-[#151614]/10 bg-white px-4 py-3 font-bold"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                ) : null}
                             </div>
                         </div>
                     ) : null}
@@ -1085,6 +1373,28 @@ export default function Welcome({
                                     LinkedIn
                                 </a>
                             ) : null}
+                            {profile.facebook_url ? (
+                                <a
+                                    href={profile.facebook_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                >
+                                    <BrandIcon icon={siFacebook} />
+                                    Facebook
+                                </a>
+                            ) : null}
+                            {profile.instagram_url ? (
+                                <a
+                                    href={profile.instagram_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                >
+                                    <BrandIcon icon={siInstagram} />
+                                    Instagram
+                                </a>
+                            ) : null}
                             {profile.website_url ? (
                                 <a
                                     href={profile.website_url}
@@ -1119,7 +1429,7 @@ export default function Welcome({
                                         Chat with Michael
                                     </p>
                                     <p className="text-xs font-semibold text-[#5c635b]">
-                                        I usually reply from the admin panel.
+                                        I usually reply as soon as I can.
                                     </p>
                                 </div>
                             </div>
@@ -1133,7 +1443,10 @@ export default function Welcome({
                             </button>
                         </div>
 
-                        <div className="max-h-[24rem] space-y-3 overflow-y-auto px-5 py-4">
+                        <div
+                            ref={chatThreadRef}
+                            className="max-h-[24rem] space-y-3 overflow-y-auto px-5 py-4"
+                        >
                             <div className="max-w-[88%] rounded-2xl rounded-tl-sm bg-[#151614] px-4 py-3 text-sm leading-6 text-white">
                                 {openingChatMessage
                                     .split('\n\n')
@@ -1146,6 +1459,19 @@ export default function Welcome({
                                         </p>
                                     ))}
                             </div>
+
+                            {chatHasOlderMessages && chatMessages.length ? (
+                                <button
+                                    type="button"
+                                    onClick={() => void loadOlderChatMessages()}
+                                    disabled={chatLoadingOlder}
+                                    className="mx-auto flex rounded-full border border-[#151614]/10 bg-white px-4 py-2 text-xs font-black text-[#151614] disabled:opacity-60"
+                                >
+                                    {chatLoadingOlder
+                                        ? 'Loading...'
+                                        : 'Load older messages'}
+                                </button>
+                            ) : null}
 
                             {chatMessages.map((message) => {
                                 const fromVisitor =
@@ -1246,6 +1572,12 @@ export default function Welcome({
                     onClick={() => setChatOpen((open) => !open)}
                     className="fixed right-4 bottom-5 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[-6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
                 >
+                    {chatUnreadCount > 0 ? (
+                        <span className="absolute -top-3 right-2 rounded-full bg-[#ff5b5b] px-3 py-1 text-[0.68rem] font-black text-white shadow-[0_8px_20px_rgba(255,91,91,0.28)]">
+                            {chatUnreadCount} new message
+                            {chatUnreadCount === 1 ? '' : 's'}
+                        </span>
+                    ) : null}
                     <MessageCircle className="size-5" />
                     Chat with me
                 </button>

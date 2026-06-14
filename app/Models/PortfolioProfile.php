@@ -17,6 +17,8 @@ class PortfolioProfile extends Model
         'website_url',
         'github_url',
         'linkedin_url',
+        'facebook_url',
+        'instagram_url',
         'availability',
         'metrics',
         'services',

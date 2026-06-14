@@ -40,6 +40,8 @@ class DatabaseSeeder extends Seeder
             'website_url' => 'https://www.mxdln.online',
             'github_url' => 'https://github.com/mx-dln',
             'linkedin_url' => 'https://linkedin.com/in/michael-de-leon-888035283',
+            'facebook_url' => 'https://www.facebook.com/kaelxdln',
+            'instagram_url' => 'https://www.instagram.com/mikexdln/',
             'availability' => 'Available for Laravel, React, Flutter, automation, and systems consulting projects.',
             'metrics' => [
                 ['value' => '4+', 'label' => 'years building production systems'],

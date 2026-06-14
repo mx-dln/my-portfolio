@@ -11,9 +11,11 @@ class PortfolioChatController extends Controller
 {
     public function show(PortfolioConversation $conversation): JsonResponse
     {
+        $beforeId = request()->integer('before_id') ?: null;
+
         return response()->json([
             'conversation_uuid' => $conversation->uuid,
-            'messages' => $conversation->messages()->get(['id', 'sender', 'body', 'created_at']),
+            'messages' => $this->messages($conversation, $beforeId),
         ]);
     }
 
@@ -50,7 +52,19 @@ class PortfolioChatController extends Controller
 
         return response()->json([
             'conversation_uuid' => $conversation->uuid,
-            'messages' => $conversation->messages()->get(['id', 'sender', 'body', 'created_at']),
+            'messages' => $this->messages($conversation),
         ], 201);
+    }
+
+    private function messages(PortfolioConversation $conversation, ?int $beforeId = null)
+    {
+        return $conversation->messages()
+            ->reorder()
+            ->when($beforeId, fn ($query) => $query->where('id', '<', $beforeId))
+            ->latest('id')
+            ->limit(10)
+            ->get(['id', 'sender', 'body', 'created_at'])
+            ->sortBy('id')
+            ->values();
     }
 }
