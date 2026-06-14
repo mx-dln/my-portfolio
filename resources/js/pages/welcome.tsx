@@ -1050,17 +1050,20 @@ export default function Welcome({
                     data-reveal="fade-down"
                     className="reveal-delay-1 fixed top-0 right-0 left-0 z-50 border-b border-[#151614]/10 bg-[#f8f9f6]/82 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-[#0f110f]/82"
                 >
-                    <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-                        <a href="#" className="group flex items-center gap-3">
-                            <span className="grid size-11 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5 dark:border-white/20 dark:bg-white">
+                    <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-5 lg:px-8">
+                        <a
+                            href="#"
+                            className="group flex min-w-0 flex-1 items-center gap-3 lg:flex-none"
+                        >
+                            <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5 dark:border-white/20 dark:bg-white">
                                 <AppLogoIcon className="h-full w-full object-contain p-1" />
                             </span>
-                            <span>
-                                <span className="block text-sm font-black tracking-[0.18em] uppercase">
-                                    Michael De Leon
+                            <span className="min-w-0">
+                                <span className="block truncate text-sm font-black tracking-[0.18em] uppercase">
+                                    {profile.name}
                                 </span>
-                                <span className="block text-xs text-[#5c635b] dark:text-white/55">
-                                    Full-stack systems engineer
+                                <span className="block truncate text-xs text-[#5c635b] dark:text-white/55">
+                                    {profile.role}
                                 </span>
                             </span>
                         </a>
@@ -1091,7 +1094,7 @@ export default function Welcome({
                             </a>
                         </div>
 
-                        <div className="flex items-center gap-2 lg:hidden">
+                        <div className="flex shrink-0 items-center gap-2 lg:hidden">
                             <ThemeToggle
                                 isDark={isDarkTheme}
                                 onToggle={toggleTheme}
@@ -1134,10 +1137,12 @@ export default function Welcome({
                     <div>
                         <div
                             data-reveal
-                            className="reveal-delay-2 mb-7 inline-flex items-center gap-3 rounded-full border border-[#151614]/12 bg-white/80 px-4 py-2 text-sm font-bold text-[#3d433c] shadow-sm dark:border-white/10 dark:bg-white/[0.07] dark:text-white/75"
+                            className="reveal-delay-2 mb-7 inline-flex max-w-full items-start gap-3 rounded-full border border-[#151614]/12 bg-white/80 px-4 py-2 text-left text-sm leading-5 font-bold text-[#3d433c] shadow-sm sm:items-center dark:border-white/10 dark:bg-white/[0.07] dark:text-white/75"
                         >
-                            <span className="size-2.5 rounded-full bg-[#1ed6c4] shadow-[0_0_0_6px_rgba(30,214,196,0.18)]" />
-                            {profile.availability}
+                            <span className="mt-1 size-2.5 shrink-0 rounded-full bg-[#1ed6c4] shadow-[0_0_0_6px_rgba(30,214,196,0.18)] sm:mt-0" />
+                            <span className="min-w-0">
+                                {profile.availability}
+                            </span>
                         </div>
 
                         <p
@@ -1564,15 +1569,15 @@ export default function Welcome({
                 <section
                     id="contact"
                     data-reveal
-                    className="relative z-10 px-5 pb-8 lg:px-8"
+                    className="relative z-10 px-4 pb-40 sm:px-5 sm:pb-14 lg:px-8"
                 >
-                    <div className="mx-auto max-w-7xl rounded-[2rem] border border-[#151614] bg-[#c6ff4a] p-6 text-[#151614] shadow-[-10px_10px_0_#151614] sm:p-10 lg:p-14 dark:border-[#c6ff4a] dark:shadow-[-10px_10px_0_rgba(30,214,196,0.42)]">
+                    <div className="mx-auto max-w-7xl overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#c6ff4a] p-5 text-[#151614] shadow-[-8px_8px_0_#151614] sm:rounded-[2rem] sm:p-10 sm:shadow-[-10px_10px_0_#151614] lg:p-14 dark:border-[#c6ff4a] dark:shadow-[-10px_10px_0_rgba(30,214,196,0.42)]">
                         <div className="grid gap-8 lg:grid-cols-[1fr_0.78fr] lg:items-end">
                             <div>
                                 <p className="text-sm font-black tracking-[0.28em] text-[#38402c] uppercase">
                                     Let us make it real
                                 </p>
-                                <h2 className="mt-4 max-w-3xl text-4xl leading-[0.98] font-black tracking-[-0.06em] sm:text-6xl">
+                                <h2 className="mt-4 max-w-3xl text-[clamp(2.35rem,10vw,3.75rem)] leading-[0.98] font-black tracking-[-0.06em]">
                                     Need a developer who can handle the product,
                                     the data, and the deployment?
                                 </h2>
@@ -1580,39 +1585,45 @@ export default function Welcome({
                             <div className="grid gap-3">
                                 <a
                                     href={`mailto:${profile.email}`}
-                                    className="inline-flex items-center justify-between rounded-2xl bg-[#151614] px-5 py-4 text-left font-black text-white transition hover:-translate-y-0.5"
+                                    className="flex w-full min-w-0 items-center justify-between gap-3 rounded-2xl bg-[#151614] px-4 py-4 text-left font-black text-white transition hover:-translate-y-0.5 sm:px-5"
                                 >
-                                    <span className="inline-flex items-center gap-3">
-                                        <Mail className="size-5" />
-                                        {profile.email}
+                                    <span className="flex min-w-0 flex-1 items-center gap-3">
+                                        <Mail className="size-5 shrink-0" />
+                                        <span className="min-w-0 text-sm leading-6 break-all sm:text-base">
+                                            {profile.email}
+                                        </span>
                                     </span>
-                                    <ArrowUpRight className="size-5" />
+                                    <ArrowUpRight className="size-5 shrink-0" />
                                 </a>
                                 {profile.phone ? (
                                     <a
                                         href={`tel:${profile.phone.replace(/\s/g, '')}`}
-                                        className="inline-flex items-center gap-3 rounded-2xl border border-[#151614]/20 bg-white/55 px-5 py-4 font-black"
+                                        className="flex w-full min-w-0 items-center gap-3 rounded-2xl border border-[#151614]/20 bg-white/55 px-4 py-4 font-black sm:px-5"
                                     >
-                                        <Phone className="size-5" />
-                                        {profile.phone}
+                                        <Phone className="size-5 shrink-0" />
+                                        <span className="min-w-0 break-words">
+                                            {profile.phone}
+                                        </span>
                                     </a>
                                 ) : null}
                                 {profile.location ? (
-                                    <div className="inline-flex items-center gap-3 rounded-2xl border border-[#151614]/20 bg-white/55 px-5 py-4 font-black">
-                                        <MapPin className="size-5" />
-                                        {profile.location}
+                                    <div className="flex w-full min-w-0 items-start gap-3 rounded-2xl border border-[#151614]/20 bg-white/55 px-4 py-4 font-black sm:px-5">
+                                        <MapPin className="mt-0.5 size-5 shrink-0" />
+                                        <span className="min-w-0 break-words">
+                                            {profile.location}
+                                        </span>
                                     </div>
                                 ) : null}
                             </div>
                         </div>
 
-                        <div className="mt-10 flex flex-wrap gap-3">
+                        <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
                             {profile.github_url ? (
                                 <a
                                     href={profile.github_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                    className="inline-flex min-w-0 items-center justify-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
                                 >
                                     <Github className="size-4" />
                                     GitHub
@@ -1623,7 +1634,7 @@ export default function Welcome({
                                     href={profile.linkedin_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                    className="inline-flex min-w-0 items-center justify-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
                                 >
                                     <Linkedin className="size-4" />
                                     LinkedIn
@@ -1634,7 +1645,7 @@ export default function Welcome({
                                     href={profile.facebook_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                    className="inline-flex min-w-0 items-center justify-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
                                 >
                                     <BrandIcon icon={siFacebook} />
                                     Facebook
@@ -1645,7 +1656,7 @@ export default function Welcome({
                                     href={profile.instagram_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                    className="inline-flex min-w-0 items-center justify-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
                                 >
                                     <BrandIcon icon={siInstagram} />
                                     Instagram
@@ -1656,7 +1667,7 @@ export default function Welcome({
                                     href={profile.website_url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                    className="inline-flex min-w-0 items-center justify-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
                                 >
                                     <Globe2 className="size-4" />
                                     Website
@@ -1664,7 +1675,7 @@ export default function Welcome({
                             ) : null}
                             <a
                                 href="/michael-de-leon-resume.pdf"
-                                className="inline-flex items-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
+                                className="inline-flex min-w-0 items-center justify-center gap-2 rounded-full border border-[#151614]/20 bg-white/60 px-4 py-2 text-sm font-black"
                             >
                                 <BriefcaseBusiness className="size-4" />
                                 Resume
@@ -2054,7 +2065,7 @@ export default function Welcome({
                 <button
                     type="button"
                     onClick={() => setSettingsOpen((open) => !open)}
-                    className="theme-settings-button fixed bottom-5 left-4 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
+                    className="theme-settings-button fixed bottom-5 left-4 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-4 py-3 text-sm font-black text-white shadow-[6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5 sm:px-5"
                 >
                     <Settings className="size-5" />
                     <span className="hidden sm:inline">Theme settings</span>
@@ -2063,7 +2074,7 @@ export default function Welcome({
                 <button
                     type="button"
                     onClick={() => setChatOpen((open) => !open)}
-                    className="fixed right-4 bottom-5 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[-6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
+                    className="fixed right-4 bottom-5 z-[60] inline-flex max-w-[calc(100vw-6.75rem)] items-center gap-3 rounded-full bg-[#151614] px-4 py-3 text-xs font-black whitespace-nowrap text-white shadow-[-6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5 sm:px-5 sm:text-sm"
                 >
                     {chatUnreadCount > 0 ? (
                         <span className="absolute -top-3 right-2 rounded-full bg-[#ff5b5b] px-3 py-1 text-[0.68rem] font-black text-white shadow-[0_8px_20px_rgba(255,91,91,0.28)]">
