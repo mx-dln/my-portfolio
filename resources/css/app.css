@@ -203,6 +203,18 @@
     }
 }
 
+@keyframes theme-cursor-orbit {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg) translateX(18px)
+            rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg) translateX(18px)
+            rotate(-360deg);
+    }
+}
+
 @keyframes portfolio-glow-load {
     from {
         opacity: 0;
@@ -233,6 +245,141 @@
         animation-play-state: paused;
     }
 
+    .portfolio-theme-playground {
+        background-color: var(--theme-background) !important;
+        color: var(--theme-ink);
+    }
+
+    .dark .portfolio-theme-playground {
+        background-color: color-mix(
+            in srgb,
+            var(--theme-background) 22%,
+            #0f110f 78%
+        ) !important;
+    }
+
+    .portfolio-theme-playground::selection,
+    .portfolio-theme-playground *::selection {
+        background-color: var(--theme-accent);
+        color: var(--theme-ink);
+    }
+
+    .portfolio-theme-playground .portfolio-bg-grid {
+        background-image:
+            linear-gradient(
+                color-mix(in srgb, var(--theme-ink) 9%, transparent) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                color-mix(in srgb, var(--theme-ink) 9%, transparent) 1px,
+                transparent 1px
+            ) !important;
+    }
+
+    .dark .portfolio-theme-playground .portfolio-bg-grid {
+        background-image:
+            linear-gradient(
+                color-mix(in srgb, var(--theme-secondary) 11%, transparent) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                color-mix(in srgb, var(--theme-secondary) 11%, transparent) 1px,
+                transparent 1px
+            ) !important;
+    }
+
+    .portfolio-theme-playground[data-theme-background='soft']
+        .portfolio-bg-grid {
+        opacity: 0.2;
+    }
+
+    .portfolio-theme-playground[data-theme-background='grid']
+        .portfolio-bg-grid {
+        opacity: 0.58;
+    }
+
+    .portfolio-theme-playground[data-theme-background='vivid']
+        .portfolio-bg-grid {
+        opacity: 0.46;
+    }
+
+    .portfolio-theme-playground .portfolio-bg-glow {
+        background:
+            radial-gradient(
+                circle at 18% 12%,
+                color-mix(in srgb, var(--theme-accent) 28%, transparent),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 85% 20%,
+                color-mix(in srgb, var(--theme-secondary) 22%, transparent),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 65% 86%,
+                color-mix(in srgb, var(--theme-accent) 13%, transparent),
+                transparent 24%
+            ) !important;
+    }
+
+    .portfolio-theme-playground[data-theme-background='soft']
+        .portfolio-bg-glow {
+        opacity: 0.7;
+        filter: blur(2px);
+    }
+
+    .portfolio-theme-playground[data-theme-background='vivid']
+        .portfolio-bg-glow {
+        opacity: 1;
+        filter: saturate(1.45);
+    }
+
+    .portfolio-theme-playground [class*='bg-[#c6ff4a]'],
+    .portfolio-theme-playground [class*='dark:bg-[#c6ff4a]'] {
+        background-color: var(--theme-accent) !important;
+    }
+
+    .portfolio-theme-playground [class*='bg-[#1ed6c4]'] {
+        background-color: var(--theme-secondary) !important;
+    }
+
+    .portfolio-theme-playground [class*='text-[#1ed6c4]'] {
+        color: var(--theme-secondary) !important;
+    }
+
+    .portfolio-theme-playground [class*='border-[#c6ff4a]'],
+    .portfolio-theme-playground [class*='dark:border-[#c6ff4a]'] {
+        border-color: var(--theme-accent) !important;
+    }
+
+    .portfolio-theme-playground [class*='#c6ff4a'][class*='shadow'],
+    .theme-settings-button {
+        box-shadow: 6px 6px 0 var(--theme-accent) !important;
+    }
+
+    .portfolio-theme-playground [class*='#1ed6c4'][class*='shadow'] {
+        box-shadow: 6px 6px 0 var(--theme-secondary) !important;
+    }
+
+    .theme-settings-panel {
+        border-color: color-mix(in srgb, var(--theme-ink) 20%, transparent);
+    }
+
+    .theme-settings-panel input[type='color'] {
+        appearance: none;
+    }
+
+    .theme-settings-panel input[type='color']::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    .theme-settings-panel input[type='color']::-webkit-color-swatch {
+        border: 1px solid color-mix(in srgb, var(--theme-ink) 16%, transparent);
+        border-radius: 0.75rem;
+    }
+
     .project-logo-image {
         filter: brightness(0) saturate(0);
     }
@@ -251,6 +398,80 @@
         );
         opacity: 0.78;
         transition: opacity 240ms ease;
+    }
+
+    .portfolio-cursor-glow::before,
+    .portfolio-cursor-glow::after {
+        position: absolute;
+        top: var(--portfolio-cursor-y, 34vh);
+        left: var(--portfolio-cursor-x, 50vw);
+        display: none;
+        border-radius: 999px;
+        content: '';
+        pointer-events: none;
+    }
+
+    .portfolio-theme-playground .portfolio-cursor-glow {
+        background: radial-gradient(
+            circle 420px at var(--portfolio-cursor-x, 50vw)
+                var(--portfolio-cursor-y, 34vh),
+            color-mix(in srgb, var(--theme-accent) 20%, transparent),
+            color-mix(in srgb, var(--theme-secondary) 12%, transparent) 34%,
+            transparent 70%
+        );
+    }
+
+    .portfolio-theme-playground[data-theme-cursor='spotlight']
+        .portfolio-cursor-glow {
+        background: radial-gradient(
+            circle 320px at var(--portfolio-cursor-x, 50vw)
+                var(--portfolio-cursor-y, 34vh),
+            color-mix(in srgb, var(--theme-surface) 35%, transparent),
+            color-mix(in srgb, var(--theme-accent) 14%, transparent) 42%,
+            transparent 72%
+        );
+        opacity: 0.9;
+    }
+
+    .portfolio-theme-playground[data-theme-cursor='orbit']
+        .portfolio-cursor-glow {
+        background: radial-gradient(
+            circle 280px at var(--portfolio-cursor-x, 50vw)
+                var(--portfolio-cursor-y, 34vh),
+            color-mix(in srgb, var(--theme-accent) 16%, transparent),
+            transparent 72%
+        );
+        opacity: 0.85;
+    }
+
+    .portfolio-theme-playground[data-theme-cursor='orbit']
+        .portfolio-cursor-glow::before,
+    .portfolio-theme-playground[data-theme-cursor='orbit']
+        .portfolio-cursor-glow::after {
+        display: block;
+        width: 92px;
+        height: 92px;
+        border: 1px solid
+            color-mix(in srgb, var(--theme-accent) 55%, transparent);
+        animation: theme-cursor-orbit 2.8s linear infinite;
+    }
+
+    .portfolio-theme-playground[data-theme-cursor='orbit']
+        .portfolio-cursor-glow::after {
+        width: 54px;
+        height: 54px;
+        border-color: color-mix(
+            in srgb,
+            var(--theme-secondary) 60%,
+            transparent
+        );
+        animation-duration: 1.9s;
+        animation-direction: reverse;
+    }
+
+    .portfolio-theme-playground[data-theme-cursor='none']
+        .portfolio-cursor-glow {
+        opacity: 0;
     }
 
     .reveal-delay-1 {

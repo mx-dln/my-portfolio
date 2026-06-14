@@ -18,13 +18,20 @@ import {
     Menu,
     Moon,
     Phone,
+    Settings,
     ServerCog,
     ShieldCheck,
     Sparkles,
     Sun,
     X,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+    type CSSProperties,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import {
     siArduino,
     siDocker,
@@ -145,6 +152,176 @@ If you have a project in mind, a collaboration opportunity, or simply want to di
 I look forward to hearing from you.`;
 
 const chatSoundUrl = '/assets/sound/chat-sound.mp3';
+const themePlaygroundStorageKey = 'portfolio-theme-playground';
+
+type ThemePlaygroundSettings = {
+    accent: string;
+    secondary: string;
+    background: string;
+    surface: string;
+    ink: string;
+    cursor: 'glow' | 'spotlight' | 'orbit' | 'none';
+    backgroundEffect: 'soft' | 'grid' | 'vivid';
+};
+
+const defaultThemePlaygroundSettings: ThemePlaygroundSettings = {
+    accent: '#c6ff4a',
+    secondary: '#1ed6c4',
+    background: '#f8f9f6',
+    surface: '#ffffff',
+    ink: '#151614',
+    cursor: 'glow',
+    backgroundEffect: 'soft',
+};
+
+const themePlaygroundPresets: Array<
+    ThemePlaygroundSettings & { name: string; note: string }
+> = [
+    {
+        ...defaultThemePlaygroundSettings,
+        name: 'Lime System',
+        note: 'Current portfolio energy',
+    },
+    {
+        name: 'Ocean Build',
+        note: 'Cool, SaaS-like, technical',
+        accent: '#38f8d7',
+        secondary: '#5aa7ff',
+        background: '#f4fbfb',
+        surface: '#ffffff',
+        ink: '#0e1b1a',
+        cursor: 'spotlight',
+        backgroundEffect: 'grid',
+    },
+    {
+        name: 'Signal Violet',
+        note: 'AI product mood',
+        accent: '#a78bfa',
+        secondary: '#22d3ee',
+        background: '#fbf8ff',
+        surface: '#ffffff',
+        ink: '#171327',
+        cursor: 'orbit',
+        backgroundEffect: 'vivid',
+    },
+    {
+        name: 'Coral Launch',
+        note: 'Warm startup pop',
+        accent: '#ff7a59',
+        secondary: '#ffd166',
+        background: '#fff8f3',
+        surface: '#ffffff',
+        ink: '#211513',
+        cursor: 'glow',
+        backgroundEffect: 'vivid',
+    },
+    {
+        name: 'Executive Mono',
+        note: 'Clean black and white',
+        accent: '#ffffff',
+        secondary: '#9ca3af',
+        background: '#f6f6f3',
+        surface: '#ffffff',
+        ink: '#111111',
+        cursor: 'spotlight',
+        backgroundEffect: 'grid',
+    },
+    {
+        name: 'Midnight Neon',
+        note: 'Dark demo mode',
+        accent: '#c6ff4a',
+        secondary: '#00e5ff',
+        background: '#0f110f',
+        surface: '#171a17',
+        ink: '#f8f9f6',
+        cursor: 'orbit',
+        backgroundEffect: 'vivid',
+    },
+];
+
+const themeBackgroundOptions: Array<{
+    value: ThemePlaygroundSettings['backgroundEffect'];
+    label: string;
+}> = [
+    { value: 'soft', label: 'Soft' },
+    { value: 'grid', label: 'Grid' },
+    { value: 'vivid', label: 'Vivid' },
+];
+
+const themeCursorOptions: Array<{
+    value: ThemePlaygroundSettings['cursor'];
+    label: string;
+}> = [
+    { value: 'glow', label: 'Glow' },
+    { value: 'spotlight', label: 'Spotlight' },
+    { value: 'orbit', label: 'Orbit' },
+    { value: 'none', label: 'Off' },
+];
+
+const themeAccentSwatches = [
+    '#c6ff4a',
+    '#1ed6c4',
+    '#38f8d7',
+    '#5aa7ff',
+    '#a78bfa',
+    '#f472b6',
+    '#ff7a59',
+    '#ffd166',
+    '#ffffff',
+    '#111111',
+    '#16a34a',
+    '#f97316',
+];
+
+function isHexColor(value: unknown): value is string {
+    return typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+}
+
+function loadThemePlaygroundSettings(): ThemePlaygroundSettings {
+    if (typeof window === 'undefined') {
+        return defaultThemePlaygroundSettings;
+    }
+
+    const stored = window.localStorage.getItem(themePlaygroundStorageKey);
+
+    if (!stored) {
+        return defaultThemePlaygroundSettings;
+    }
+
+    try {
+        const parsed = JSON.parse(stored) as Partial<ThemePlaygroundSettings>;
+
+        return {
+            accent: isHexColor(parsed.accent)
+                ? parsed.accent
+                : defaultThemePlaygroundSettings.accent,
+            secondary: isHexColor(parsed.secondary)
+                ? parsed.secondary
+                : defaultThemePlaygroundSettings.secondary,
+            background: isHexColor(parsed.background)
+                ? parsed.background
+                : defaultThemePlaygroundSettings.background,
+            surface: isHexColor(parsed.surface)
+                ? parsed.surface
+                : defaultThemePlaygroundSettings.surface,
+            ink: isHexColor(parsed.ink)
+                ? parsed.ink
+                : defaultThemePlaygroundSettings.ink,
+            cursor: themeCursorOptions.some(
+                (option) => option.value === parsed.cursor,
+            )
+                ? (parsed.cursor as ThemePlaygroundSettings['cursor'])
+                : defaultThemePlaygroundSettings.cursor,
+            backgroundEffect: themeBackgroundOptions.some(
+                (option) => option.value === parsed.backgroundEffect,
+            )
+                ? (parsed.backgroundEffect as ThemePlaygroundSettings['backgroundEffect'])
+                : defaultThemePlaygroundSettings.backgroundEffect,
+        };
+    } catch {
+        return defaultThemePlaygroundSettings;
+    }
+}
 
 type TechIconStyle = {
     keywords: string[];
@@ -448,6 +625,10 @@ export default function Welcome({
 }: WelcomeProps) {
     const { resolvedAppearance, updateAppearance } = useAppearance();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [themeSettings, setThemeSettings] = useState<ThemePlaygroundSettings>(
+        loadThemePlaygroundSettings,
+    );
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [activeCapabilityIndex, setActiveCapabilityIndex] = useState(0);
     const [chatOpen, setChatOpen] = useState(false);
@@ -539,9 +720,38 @@ export default function Welcome({
         ['Contact', '#contact'],
     ];
     const isDarkTheme = resolvedAppearance === 'dark';
+    const themePlaygroundStyle = {
+        '--theme-accent': themeSettings.accent,
+        '--theme-secondary': themeSettings.secondary,
+        '--theme-background': themeSettings.background,
+        '--theme-surface': themeSettings.surface,
+        '--theme-ink': themeSettings.ink,
+    } as CSSProperties;
 
     function toggleTheme() {
         updateAppearance(isDarkTheme ? 'light' : 'dark');
+    }
+
+    function updateThemeSetting<K extends keyof ThemePlaygroundSettings>(
+        key: K,
+        value: ThemePlaygroundSettings[K],
+    ) {
+        setThemeSettings((currentSettings) => ({
+            ...currentSettings,
+            [key]: value,
+        }));
+    }
+
+    function applyThemePreset(preset: (typeof themePlaygroundPresets)[number]) {
+        setThemeSettings({
+            accent: preset.accent,
+            secondary: preset.secondary,
+            background: preset.background,
+            surface: preset.surface,
+            ink: preset.ink,
+            cursor: preset.cursor,
+            backgroundEffect: preset.backgroundEffect,
+        });
     }
 
     function playChatSound() {
@@ -700,6 +910,13 @@ export default function Welcome({
     }, [activeCapabilityIndex, capabilityCards.length]);
 
     useEffect(() => {
+        window.localStorage.setItem(
+            themePlaygroundStorageKey,
+            JSON.stringify(themeSettings),
+        );
+    }, [themeSettings]);
+
+    useEffect(() => {
         const storedUuid = window.localStorage.getItem(
             'portfolio-chat-conversation',
         );
@@ -819,7 +1036,12 @@ export default function Welcome({
     return (
         <>
             <Head title={`${profile.name} - ${profile.role}`} />
-            <main className="min-h-screen bg-[#f8f9f6] text-[#151614] transition-colors selection:bg-[#c6ff4a] selection:text-[#151614] dark:bg-[#0f110f] dark:text-[#f8f9f6]">
+            <main
+                className="portfolio-theme-playground min-h-screen bg-[#f8f9f6] text-[#151614] transition-colors selection:bg-[#c6ff4a] selection:text-[#151614] dark:bg-[#0f110f] dark:text-[#f8f9f6]"
+                data-theme-background={themeSettings.backgroundEffect}
+                data-theme-cursor={themeSettings.cursor}
+                style={themePlaygroundStyle}
+            >
                 <div className="portfolio-bg-grid pointer-events-none fixed inset-0 z-0 [background-image:linear-gradient(rgba(21,22,20,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(21,22,20,0.08)_1px,transparent_1px)] [background-size:64px_64px] opacity-[0.45] dark:[background-image:linear-gradient(rgba(248,249,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(248,249,246,0.08)_1px,transparent_1px)]" />
                 <div className="portfolio-bg-glow pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_12%,rgba(198,255,74,0.24),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(30,214,196,0.18),transparent_28%),radial-gradient(circle_at_65%_86%,rgba(255,91,91,0.12),transparent_24%)] dark:bg-[radial-gradient(circle_at_18%_12%,rgba(198,255,74,0.16),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(30,214,196,0.16),transparent_28%),radial-gradient(circle_at_65%_86%,rgba(255,91,91,0.1),transparent_24%)]" />
                 <div className="portfolio-cursor-glow pointer-events-none fixed inset-0 z-[1]" />
@@ -1451,6 +1673,234 @@ export default function Welcome({
                     </div>
                 </section>
 
+                {settingsOpen ? (
+                    <aside className="theme-settings-panel fixed bottom-24 left-4 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] text-[#151614] shadow-[10px_10px_0_#151614] dark:border-white/12 dark:bg-[#171a17] dark:text-white dark:shadow-[10px_10px_0_rgba(198,255,74,0.35)]">
+                        <div className="flex items-start justify-between gap-4 border-b border-[#151614]/10 bg-white px-5 py-4 dark:border-white/10 dark:bg-white/[0.06]">
+                            <div>
+                                <p className="text-xs font-black tracking-[0.24em] text-[#5a6257] uppercase dark:text-white/45">
+                                    Theme lab
+                                </p>
+                                <h3 className="mt-1 text-xl font-black tracking-[-0.04em]">
+                                    Play with the website look
+                                </h3>
+                                <p className="mt-1 text-xs font-semibold text-[#5c635b] dark:text-white/55">
+                                    Saved only on this browser.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setSettingsOpen(false)}
+                                className="grid size-9 shrink-0 place-items-center rounded-full border border-[#151614]/10 bg-white dark:border-white/10 dark:bg-white/[0.08]"
+                                aria-label="Close theme settings"
+                            >
+                                <X className="size-4" />
+                            </button>
+                        </div>
+
+                        <div className="max-h-[70vh] space-y-6 overflow-y-auto px-5 py-5">
+                            <div>
+                                <p className="mb-3 text-xs font-black tracking-[0.2em] text-[#5a6257] uppercase dark:text-white/45">
+                                    Fast presets
+                                </p>
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    {themePlaygroundPresets.map((preset) => (
+                                        <button
+                                            key={preset.name}
+                                            type="button"
+                                            onClick={() =>
+                                                applyThemePreset(preset)
+                                            }
+                                            className="group rounded-2xl border border-[#151614]/10 bg-white p-3 text-left transition hover:-translate-y-0.5 hover:border-[#151614]/35 dark:border-white/10 dark:bg-white/[0.06] dark:hover:border-white/30"
+                                        >
+                                            <span className="mb-3 flex gap-1.5">
+                                                {[
+                                                    preset.accent,
+                                                    preset.secondary,
+                                                    preset.background,
+                                                ].map((color) => (
+                                                    <span
+                                                        key={`${preset.name}-${color}`}
+                                                        className="size-5 rounded-full border border-[#151614]/12 dark:border-white/20"
+                                                        style={{
+                                                            backgroundColor:
+                                                                color,
+                                                        }}
+                                                    />
+                                                ))}
+                                            </span>
+                                            <span className="block text-sm font-black">
+                                                {preset.name}
+                                            </span>
+                                            <span className="mt-1 block text-xs font-semibold text-[#5c635b] dark:text-white/50">
+                                                {preset.note}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="mb-3 text-xs font-black tracking-[0.2em] text-[#5a6257] uppercase dark:text-white/45">
+                                    Accent swatches
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {themeAccentSwatches.map((color) => (
+                                        <button
+                                            key={color}
+                                            type="button"
+                                            onClick={() =>
+                                                updateThemeSetting(
+                                                    'accent',
+                                                    color,
+                                                )
+                                            }
+                                            className={cx(
+                                                'size-9 rounded-full border transition hover:scale-110',
+                                                themeSettings.accent.toLowerCase() ===
+                                                    color.toLowerCase()
+                                                    ? 'border-[#151614] ring-2 ring-[#151614]/20 dark:border-white dark:ring-white/20'
+                                                    : 'border-[#151614]/12 dark:border-white/20',
+                                            )}
+                                            style={{ backgroundColor: color }}
+                                            aria-label={`Use ${color} accent`}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                {(
+                                    [
+                                        ['accent', 'Theme color'],
+                                        ['secondary', 'Glow color'],
+                                        ['background', 'Background'],
+                                        ['surface', 'Card surface'],
+                                        ['ink', 'Text color'],
+                                    ] as Array<
+                                        [
+                                            keyof Pick<
+                                                ThemePlaygroundSettings,
+                                                | 'accent'
+                                                | 'secondary'
+                                                | 'background'
+                                                | 'surface'
+                                                | 'ink'
+                                            >,
+                                            string,
+                                        ]
+                                    >
+                                ).map(([key, label]) => (
+                                    <label
+                                        key={key}
+                                        className="rounded-2xl border border-[#151614]/10 bg-white p-3 text-sm font-black dark:border-white/10 dark:bg-white/[0.06]"
+                                    >
+                                        <span className="mb-2 block text-xs tracking-[0.16em] text-[#5a6257] uppercase dark:text-white/45">
+                                            {label}
+                                        </span>
+                                        <span className="flex items-center gap-3">
+                                            <input
+                                                type="color"
+                                                value={themeSettings[key]}
+                                                onChange={(event) =>
+                                                    updateThemeSetting(
+                                                        key,
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className="h-10 w-12 cursor-pointer rounded-xl border-0 bg-transparent p-0"
+                                            />
+                                            <input
+                                                value={themeSettings[key]}
+                                                onChange={(event) =>
+                                                    updateThemeSetting(
+                                                        key,
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className="min-w-0 flex-1 rounded-xl border border-[#151614]/10 bg-[#f8f9f6] px-3 py-2 text-xs font-black uppercase outline-none focus:border-[#151614] dark:border-white/12 dark:bg-[#0f110f] dark:text-white dark:focus:border-[#c6ff4a]"
+                                            />
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="rounded-2xl border border-[#151614]/10 bg-white p-3 dark:border-white/10 dark:bg-white/[0.06]">
+                                    <p className="mb-3 text-xs font-black tracking-[0.16em] text-[#5a6257] uppercase dark:text-white/45">
+                                        Cursor effect
+                                    </p>
+                                    <div className="grid gap-2">
+                                        {themeCursorOptions.map((option) => (
+                                            <button
+                                                key={option.value}
+                                                type="button"
+                                                onClick={() =>
+                                                    updateThemeSetting(
+                                                        'cursor',
+                                                        option.value,
+                                                    )
+                                                }
+                                                className={cx(
+                                                    'rounded-full border px-3 py-2 text-xs font-black transition',
+                                                    themeSettings.cursor ===
+                                                        option.value
+                                                        ? 'border-[#151614] bg-[#151614] text-white dark:border-[#c6ff4a] dark:bg-[#c6ff4a] dark:text-[#151614]'
+                                                        : 'border-[#151614]/10 bg-[#f8f9f6] text-[#394038] dark:border-white/10 dark:bg-white/[0.05] dark:text-white/68',
+                                                )}
+                                            >
+                                                {option.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="rounded-2xl border border-[#151614]/10 bg-white p-3 dark:border-white/10 dark:bg-white/[0.06]">
+                                    <p className="mb-3 text-xs font-black tracking-[0.16em] text-[#5a6257] uppercase dark:text-white/45">
+                                        Background
+                                    </p>
+                                    <div className="grid gap-2">
+                                        {themeBackgroundOptions.map(
+                                            (option) => (
+                                                <button
+                                                    key={option.value}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateThemeSetting(
+                                                            'backgroundEffect',
+                                                            option.value,
+                                                        )
+                                                    }
+                                                    className={cx(
+                                                        'rounded-full border px-3 py-2 text-xs font-black transition',
+                                                        themeSettings.backgroundEffect ===
+                                                            option.value
+                                                            ? 'border-[#151614] bg-[#151614] text-white dark:border-[#c6ff4a] dark:bg-[#c6ff4a] dark:text-[#151614]'
+                                                            : 'border-[#151614]/10 bg-[#f8f9f6] text-[#394038] dark:border-white/10 dark:bg-white/[0.05] dark:text-white/68',
+                                                    )}
+                                                >
+                                                    {option.label}
+                                                </button>
+                                            ),
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setThemeSettings(
+                                        defaultThemePlaygroundSettings,
+                                    )
+                                }
+                                className="inline-flex w-full items-center justify-center rounded-full border border-[#151614]/10 bg-white px-5 py-3 text-sm font-black transition hover:border-[#151614] dark:border-white/10 dark:bg-white/[0.06] dark:hover:border-white/35"
+                            >
+                                Reset theme lab
+                            </button>
+                        </div>
+                    </aside>
+                ) : null}
+
                 {chatOpen ? (
                     <aside className="fixed right-4 bottom-24 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] text-[#151614] shadow-[-10px_10px_0_#151614] dark:border-white/12 dark:bg-[#171a17] dark:text-white dark:shadow-[-10px_10px_0_rgba(198,255,74,0.35)]">
                         <div className="flex items-center justify-between border-b border-[#151614]/10 bg-white px-5 py-4 dark:border-white/10 dark:bg-white/[0.06]">
@@ -1600,6 +2050,15 @@ export default function Welcome({
                         </div>
                     </aside>
                 ) : null}
+
+                <button
+                    type="button"
+                    onClick={() => setSettingsOpen((open) => !open)}
+                    className="theme-settings-button fixed bottom-5 left-4 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
+                >
+                    <Settings className="size-5" />
+                    <span className="hidden sm:inline">Theme settings</span>
+                </button>
 
                 <button
                     type="button"
