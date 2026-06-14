@@ -3,8 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\PortfolioConversation;
+use App\Models\PortfolioProject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PortfolioTest extends TestCase
@@ -100,5 +103,36 @@ class PortfolioTest extends TestCase
             'sender' => 'admin',
             'body' => 'Thanks for reaching out. I will email you today.',
         ]);
+    }
+
+    public function test_authenticated_user_can_upload_svg_project_logo(): void
+    {
+        Storage::fake('public');
+        $this->actingAs(User::factory()->create());
+
+        $svg = UploadedFile::fake()->createWithContent(
+            'project-logo.svg',
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>',
+        );
+
+        $response = $this->post(route('admin.portfolio.projects.store'), [
+            'title' => 'SVG Logo Project',
+            'category' => 'Web App',
+            'year' => '2026',
+            'summary' => 'A project with an SVG logo upload.',
+            'impact' => 'Confirms SVG project logos are accepted.',
+            'stack_text' => 'Laravel, React',
+            'status' => 'Shipped',
+            'featured' => '1',
+            'logo' => $svg,
+        ]);
+
+        $response->assertRedirect();
+
+        $project = PortfolioProject::query()->where('title', 'SVG Logo Project')->firstOrFail();
+
+        $this->assertNotNull($project->logo_path);
+        $this->assertStringEndsWith('.svg', $project->logo_path);
+        Storage::disk('public')->assertExists($project->logo_path);
     }
 }

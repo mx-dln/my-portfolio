@@ -138,7 +138,7 @@ function ProjectEditor({ project }: { project: PortfolioProject }) {
                     <input
                         key={fileInputKey}
                         type="file"
-                        accept="image/png,image/jpeg,image/webp"
+                        accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg"
                         className={fieldClass(form.errors.logo)}
                         onChange={(event) =>
                             form.setData(
@@ -150,7 +150,7 @@ function ProjectEditor({ project }: { project: PortfolioProject }) {
                     <p className="mt-2 text-xs font-semibold text-neutral-500">
                         {form.data.logo
                             ? form.data.logo.name
-                            : 'PNG, JPG, or WebP. Maximum 4MB.'}
+                            : 'PNG, JPG, WebP, or SVG. Maximum 4MB.'}
                     </p>
                     <FieldError error={form.errors.logo} />
                 </label>
@@ -479,7 +479,7 @@ export default function Projects({ projects }: ProjectsProps) {
                                     <input
                                         key={fileInputKey}
                                         type="file"
-                                        accept="image/png,image/jpeg,image/webp"
+                                        accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg"
                                         className={fieldClass(form.errors.logo)}
                                         onChange={(event) =>
                                             form.setData(

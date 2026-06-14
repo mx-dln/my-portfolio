@@ -322,7 +322,7 @@ class PortfolioAdminController extends Controller
     private function projectLogoPath(Request $request): ?string
     {
         $request->validate([
-            'logo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'logo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,svg', 'max:4096'],
         ]);
 
         if (! $request->hasFile('logo')) {
