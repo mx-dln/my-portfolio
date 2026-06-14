@@ -1,9 +1,10 @@
 import { Head, useForm } from '@inertiajs/react';
-import { CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { CheckCircle2, LoaderCircle, Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
 import {
     AdminHero,
     FieldError,
+    FormStatus,
     fieldClass,
     type PortfolioProfile,
     type Service,
@@ -312,13 +313,25 @@ export default function Capability({ profile, skillGroups }: CapabilityProps) {
                         </section>
 
                         <div className="lg:col-span-2">
+                            <FormStatus
+                                processing={form.processing}
+                                progress={form.progress}
+                                saved={form.recentlySuccessful}
+                                label="Saving capability map..."
+                            />
                             <button
                                 type="submit"
                                 disabled={form.processing}
-                                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
+                                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
                             >
-                                Save capability map
-                                <CheckCircle2 className="size-4" />
+                                {form.processing
+                                    ? 'Saving...'
+                                    : 'Save capability map'}
+                                {form.processing ? (
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                ) : (
+                                    <CheckCircle2 className="size-4" />
+                                )}
                             </button>
                         </div>
                     </form>

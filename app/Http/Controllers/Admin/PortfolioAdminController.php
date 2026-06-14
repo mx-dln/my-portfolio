@@ -78,7 +78,7 @@ class PortfolioAdminController extends Controller
 
         $this->profileRecord()->update($data);
 
-        return back()->with('success', 'Hero updated.');
+        return $this->backWithToast('Hero updated.');
     }
 
     public function updateContact(Request $request): RedirectResponse
@@ -96,7 +96,7 @@ class PortfolioAdminController extends Controller
 
         $this->profileRecord()->update($data);
 
-        return back()->with('success', 'Contact links updated.');
+        return $this->backWithToast('Contact links updated.');
     }
 
     public function updateCapability(Request $request): RedirectResponse
@@ -156,7 +156,7 @@ class PortfolioAdminController extends Controller
             )
             ->delete();
 
-        return back()->with('success', 'Capability map updated.');
+        return $this->backWithToast('Capability map updated.');
     }
 
     public function updateProfile(Request $request): RedirectResponse
@@ -179,7 +179,7 @@ class PortfolioAdminController extends Controller
 
         PortfolioProfile::query()->updateOrCreate(['id' => 1], $data);
 
-        return back()->with('success', 'Profile updated.');
+        return $this->backWithToast('Profile updated.');
     }
 
     public function storeExperience(Request $request): RedirectResponse
@@ -189,21 +189,21 @@ class PortfolioAdminController extends Controller
 
         PortfolioExperience::query()->create($data);
 
-        return back()->with('success', 'Experience added.');
+        return $this->backWithToast('Experience added.');
     }
 
     public function updateExperience(Request $request, PortfolioExperience $experience): RedirectResponse
     {
         $experience->update($this->experienceData($request));
 
-        return back()->with('success', 'Experience updated.');
+        return $this->backWithToast('Experience updated.');
     }
 
     public function destroyExperience(PortfolioExperience $experience): RedirectResponse
     {
         $experience->delete();
 
-        return back()->with('success', 'Experience removed.');
+        return $this->backWithToast('Experience removed.');
     }
 
     public function storeProject(Request $request): RedirectResponse
@@ -219,7 +219,7 @@ class PortfolioAdminController extends Controller
 
         PortfolioProject::query()->create($data);
 
-        return back()->with('success', 'Project added.');
+        return $this->backWithToast('Project added.');
     }
 
     public function updateProject(Request $request, PortfolioProject $project): RedirectResponse
@@ -234,7 +234,7 @@ class PortfolioAdminController extends Controller
 
         $project->update($data);
 
-        return back()->with('success', 'Project updated.');
+        return $this->backWithToast('Project updated.');
     }
 
     public function destroyProject(PortfolioProject $project): RedirectResponse
@@ -243,7 +243,7 @@ class PortfolioAdminController extends Controller
 
         $project->delete();
 
-        return back()->with('success', 'Project removed.');
+        return $this->backWithToast('Project removed.');
     }
 
     public function replyToConversation(Request $request, PortfolioConversation $conversation): RedirectResponse|JsonResponse
@@ -276,8 +276,19 @@ class PortfolioAdminController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Reply sent.');
+        return $this->backWithToast('Reply sent.');
     }
+
+    private function backWithToast(string $message): RedirectResponse
+    {
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => $message,
+        ]);
+
+        return back();
+    }
+
     /**
      * @return array<string, mixed>
      */

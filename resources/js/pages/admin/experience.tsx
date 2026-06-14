@@ -1,9 +1,10 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { CheckCircle2, LoaderCircle, Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
 import {
     AdminHero,
     FieldError,
+    FormStatus,
     fieldClass,
     type PortfolioExperience,
 } from './portfolio-shared';
@@ -119,14 +120,26 @@ function ExperienceEditor({ experience }: { experience: PortfolioExperience }) {
                 <FieldError error={form.errors.bullets_text} />
             </label>
 
-            <button
-                type="submit"
-                disabled={form.processing}
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
-            >
-                Save experience
-                <CheckCircle2 className="size-4" />
-            </button>
+            <div className="mt-5 grid gap-3">
+                <FormStatus
+                    processing={form.processing}
+                    progress={form.progress}
+                    saved={form.recentlySuccessful}
+                    label="Saving experience..."
+                />
+                <button
+                    type="submit"
+                    disabled={form.processing}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
+                >
+                    {form.processing ? 'Saving...' : 'Save experience'}
+                    {form.processing ? (
+                        <LoaderCircle className="size-4 animate-spin" />
+                    ) : (
+                        <CheckCircle2 className="size-4" />
+                    )}
+                </button>
+            </div>
         </form>
     );
 }
@@ -257,9 +270,19 @@ export default function Experience({ experiences }: ExperienceProps) {
                                     disabled={form.processing}
                                     className="inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
                                 >
-                                    Add role
-                                    <CheckCircle2 className="size-4" />
+                                    {form.processing ? 'Saving...' : 'Add role'}
+                                    {form.processing ? (
+                                        <LoaderCircle className="size-4 animate-spin" />
+                                    ) : (
+                                        <CheckCircle2 className="size-4" />
+                                    )}
                                 </button>
+                                <FormStatus
+                                    processing={form.processing}
+                                    progress={form.progress}
+                                    saved={form.recentlySuccessful}
+                                    label="Saving experience..."
+                                />
                             </div>
                         </form>
 

@@ -1,10 +1,11 @@
 import { Head, useForm } from '@inertiajs/react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, LoaderCircle } from 'lucide-react';
 import type { FormEvent } from 'react';
 import {
     AdminHero,
     emptyProfile,
     FieldError,
+    FormStatus,
     fieldClass,
     type PortfolioProfile,
 } from './portfolio-shared';
@@ -61,9 +62,22 @@ export default function Contact({ profile }: ContactProps) {
                                 disabled={form.processing}
                                 className="inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
                             >
-                                Save contact
-                                <CheckCircle2 className="size-4" />
+                                {form.processing ? 'Saving...' : 'Save contact'}
+                                {form.processing ? (
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                ) : (
+                                    <CheckCircle2 className="size-4" />
+                                )}
                             </button>
+                        </div>
+
+                        <div className="mt-4">
+                            <FormStatus
+                                processing={form.processing}
+                                progress={form.progress}
+                                saved={form.recentlySuccessful}
+                                label="Saving contact details..."
+                            />
                         </div>
 
                         <div className="mt-6 grid gap-4 md:grid-cols-2">

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { CheckCircle2, LoaderCircle } from 'lucide-react';
 
 export type Metric = {
     value: string;
@@ -91,6 +92,63 @@ export function FieldError({ error }: { error?: string }) {
     }
 
     return <p className="mt-1 text-sm font-medium text-red-600">{error}</p>;
+}
+
+export function FormStatus({
+    processing,
+    progress,
+    saved,
+    label = 'Saving changes...',
+}: {
+    processing: boolean;
+    progress?: { percentage?: number | null } | null;
+    saved?: boolean;
+    label?: string;
+}) {
+    if (!processing && !progress && !saved) {
+        return null;
+    }
+
+    const progressPercentage =
+        typeof progress?.percentage === 'number'
+            ? Math.max(0, Math.min(100, Math.round(progress.percentage)))
+            : null;
+    const visiblePercentage = progressPercentage ?? (processing ? 72 : 100);
+    const message =
+        progressPercentage !== null
+            ? `Uploading ${progressPercentage}%`
+            : saved
+              ? 'Saved successfully.'
+              : label;
+
+    return (
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-3 text-xs font-black text-neutral-600 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-300">
+            <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2">
+                    {saved && !processing ? (
+                        <CheckCircle2 className="size-4 text-emerald-500" />
+                    ) : (
+                        <LoaderCircle className="size-4 animate-spin text-lime-500" />
+                    )}
+                    {message}
+                </span>
+                {progressPercentage !== null ? (
+                    <span>{progressPercentage}%</span>
+                ) : null}
+            </div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
+                <div
+                    className={[
+                        'h-full rounded-full bg-[#c6ff4a] transition-all duration-300',
+                        progressPercentage === null && processing
+                            ? 'animate-pulse'
+                            : '',
+                    ].join(' ')}
+                    style={{ width: `${visiblePercentage}%` }}
+                />
+            </div>
+        </div>
+    );
 }
 
 export function AdminHero({

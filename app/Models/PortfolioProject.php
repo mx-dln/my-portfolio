@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class PortfolioProject extends Model
 {
@@ -39,6 +38,6 @@ class PortfolioProject extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->logo_path);
+        return '/storage/'.ltrim(str_replace('\\', '/', $this->logo_path), '/');
     }
 }
