@@ -523,7 +523,7 @@ export default function Welcome({
                         <div className="hidden items-center gap-3 lg:flex">
                             {auth.user ? (
                                 <Link
-                                    href="/dashboard"
+                                    href="/admin/portfolio"
                                     className="rounded-full border border-[#151614]/15 bg-white px-4 py-2 text-sm font-bold text-[#151614] transition hover:border-[#151614]"
                                 >
                                     Dashboard
@@ -567,7 +567,7 @@ export default function Welcome({
                                 ))}
                                 {auth.user ? (
                                     <Link
-                                        href="/dashboard"
+                                        href="/admin/portfolio"
                                         className="rounded-xl border border-[#151614]/10 bg-white px-4 py-3 font-bold"
                                     >
                                         Dashboard
@@ -1022,7 +1022,7 @@ export default function Welcome({
                     data-reveal
                     className="relative z-10 px-5 pb-8 lg:px-8"
                 >
-                    <div className="mx-auto max-w-7xl rounded-[2rem] border border-[#151614] bg-[#c6ff4a] p-6 shadow-[10px_10px_0_#151614] sm:p-10 lg:p-14">
+                    <div className="mx-auto max-w-7xl rounded-[2rem] border border-[#151614] bg-[#c6ff4a] p-6 shadow-[-10px_10px_0_#151614] sm:p-10 lg:p-14">
                         <div className="grid gap-8 lg:grid-cols-[1fr_0.78fr] lg:items-end">
                             <div>
                                 <p className="text-sm font-black tracking-[0.28em] text-[#38402c] uppercase">
@@ -1108,7 +1108,7 @@ export default function Welcome({
                 </section>
 
                 {chatOpen ? (
-                    <aside className="fixed bottom-24 left-4 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] shadow-[10px_10px_0_#151614]">
+                    <aside className="fixed right-4 bottom-24 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] shadow-[-10px_10px_0_#151614]">
                         <div className="flex items-center justify-between border-b border-[#151614]/10 bg-white px-5 py-4">
                             <div className="flex items-center gap-3">
                                 <span className="grid size-10 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[4px_4px_0_#c6ff4a]">
@@ -1244,7 +1244,7 @@ export default function Welcome({
                 <button
                     type="button"
                     onClick={() => setChatOpen((open) => !open)}
-                    className="fixed bottom-5 left-4 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
+                    className="fixed right-4 bottom-5 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[-6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
                 >
                     <MessageCircle className="size-5" />
                     Chat with me

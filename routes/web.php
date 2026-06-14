@@ -10,7 +10,7 @@ Route::get('portfolio-chat/{conversation:uuid}', [PortfolioChatController::class
 Route::post('portfolio-chat', [PortfolioChatController::class, 'store'])->name('portfolio.chat.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [PortfolioAdminController::class, 'index'])->name('dashboard');
     Route::get('admin/portfolio', [PortfolioAdminController::class, 'index'])->name('admin.portfolio');
     Route::patch('admin/portfolio/profile', [PortfolioAdminController::class, 'updateProfile'])->name('admin.portfolio.profile.update');
     Route::post('admin/portfolio/projects', [PortfolioAdminController::class, 'storeProject'])->name('admin.portfolio.projects.store');
