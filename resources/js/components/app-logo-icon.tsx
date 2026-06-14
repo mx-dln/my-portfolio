@@ -7,7 +7,7 @@ export default function AppLogoIcon({
 }: ComponentProps<'img'>) {
     return (
         <img
-            src="/assets/image/logo.png"
+            src="/assets/image/md-no-bg.png"
             alt={alt}
             className={className}
             draggable={false}

@@ -830,8 +830,8 @@ export default function Welcome({
                 >
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
                         <a href="#" className="group flex items-center gap-3">
-                            <span className="grid size-11 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5 dark:border-white/20 dark:bg-white/10">
-                                <AppLogoIcon className="h-full w-full object-contain p-1.5" />
+                            <span className="grid size-11 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5 dark:border-white/20 dark:bg-white">
+                                <AppLogoIcon className="h-full w-full object-contain p-1" />
                             </span>
                             <span>
                                 <span className="block text-sm font-black tracking-[0.18em] uppercase">
@@ -920,19 +920,19 @@ export default function Welcome({
 
                         <p
                             data-reveal
-                            className="reveal-delay-3 mb-5 text-sm font-black tracking-[0.28em] text-[#5a6257] uppercase"
+                            className="reveal-delay-3 mb-5 text-sm font-black tracking-[0.28em] text-[#5a6257] uppercase dark:text-white/45"
                         >
                             {profile.role}
                         </p>
                         <h1
                             data-reveal
-                            className="reveal-delay-4 max-w-5xl text-5xl leading-[0.92] font-black tracking-[-0.06em] text-[#151614] sm:text-7xl lg:text-[6.8rem]"
+                            className="reveal-delay-4 max-w-5xl text-5xl leading-[0.92] font-black tracking-[-0.06em] text-[#151614] sm:text-7xl lg:text-[6.8rem] dark:text-white"
                         >
                             {profile.name}
                         </h1>
                         <p
                             data-reveal
-                            className="reveal-delay-5 mt-8 max-w-2xl text-xl leading-8 text-[#333933] sm:text-2xl sm:leading-10"
+                            className="reveal-delay-5 mt-8 max-w-2xl text-xl leading-8 text-[#333933] sm:text-2xl sm:leading-10 dark:text-white/68"
                         >
                             {profile.tagline}
                         </p>
@@ -950,7 +950,7 @@ export default function Welcome({
                             </a>
                             <a
                                 href="/michael-de-leon-resume.pdf"
-                                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#151614]/15 bg-white px-6 py-4 text-sm font-black text-[#151614] transition hover:border-[#151614]"
+                                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#151614]/15 bg-white px-6 py-4 text-sm font-black text-[#151614] transition hover:border-[#151614] dark:border-white/12 dark:bg-white/[0.09] dark:text-white dark:hover:border-white/35"
                             >
                                 Resume PDF
                             </a>
@@ -963,12 +963,12 @@ export default function Welcome({
                             {metrics.map((metric) => (
                                 <div
                                     key={`${metric.value}-${metric.label}`}
-                                    className="border-t border-[#151614]/15 pt-4"
+                                    className="border-t border-[#151614]/15 pt-4 dark:border-white/12"
                                 >
                                     <div className="text-4xl font-black tracking-[-0.06em]">
                                         {metric.value}
                                     </div>
-                                    <div className="mt-1 text-sm leading-5 font-semibold text-[#5c635b]">
+                                    <div className="mt-1 text-sm leading-5 font-semibold text-[#5c635b] dark:text-white/55">
                                         {metric.label}
                                     </div>
                                 </div>
@@ -1033,14 +1033,14 @@ export default function Welcome({
                             data-reveal
                             className="lg:sticky lg:top-28 lg:self-start"
                         >
-                            <p className="text-sm font-black tracking-[0.28em] text-[#5a6257] uppercase">
+                            <p className="text-sm font-black tracking-[0.28em] text-[#5a6257] uppercase dark:text-white/45">
                                 Selected work
                             </p>
                             <h2 className="mt-4 text-4xl leading-[0.98] font-black tracking-[-0.06em] sm:text-6xl">
                                 Built for messy operations, not just pretty
                                 screens.
                             </h2>
-                            <p className="mt-6 text-lg leading-8 text-[#4d554c]">
+                            <p className="mt-6 text-lg leading-8 text-[#4d554c] dark:text-white/62">
                                 {profile.summary}
                             </p>
 
@@ -1055,8 +1055,8 @@ export default function Welcome({
                                         className={cx(
                                             'rounded-full border px-4 py-2 text-sm font-black transition',
                                             selectedCategory === category
-                                                ? 'border-[#151614] bg-[#151614] text-white'
-                                                : 'border-[#151614]/12 bg-white text-[#394038] hover:border-[#151614]',
+                                                ? 'border-[#151614] bg-[#151614] text-white dark:border-[#c6ff4a] dark:bg-[#c6ff4a] dark:text-[#151614]'
+                                                : 'border-[#151614]/12 bg-white text-[#394038] hover:border-[#151614] dark:border-white/12 dark:bg-white/[0.08] dark:text-white/74 dark:hover:border-white/35 dark:hover:bg-white/[0.12]',
                                         )}
                                     >
                                         {category}
@@ -1080,18 +1080,18 @@ export default function Welcome({
                                         zIndex: index + 1,
                                     }}
                                 >
-                                    <article className="work-card-shell group rounded-[1.35rem] border border-[#151614]/10 bg-white p-5 shadow-sm transition hover:border-[#151614]/35 hover:shadow-md sm:p-7">
+                                    <article className="work-card-shell group rounded-[1.35rem] border border-[#151614]/10 bg-white p-5 text-[#151614] shadow-sm transition hover:border-[#151614]/35 hover:shadow-md sm:p-7 dark:border-white/12 dark:bg-[#171a17]/92 dark:text-white dark:shadow-[8px_8px_0_rgba(30,214,196,0.14)] dark:hover:border-white/28">
                                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                             <div>
-                                                <div className="flex flex-wrap items-center gap-2 text-xs font-black tracking-[0.18em] text-[#63705e] uppercase">
+                                                <div className="flex flex-wrap items-center gap-2 text-xs font-black tracking-[0.18em] text-[#63705e] uppercase dark:text-white/50">
                                                     <span>
                                                         {project.category}
                                                     </span>
-                                                    <span className="text-[#151614]/25">
+                                                    <span className="text-[#151614]/25 dark:text-white/20">
                                                         /
                                                     </span>
                                                     <span>{project.year}</span>
-                                                    <span className="rounded-full bg-[#edf0e9] px-2.5 py-1 tracking-normal text-[#394038]">
+                                                    <span className="rounded-full bg-[#edf0e9] px-2.5 py-1 tracking-normal text-[#394038] dark:bg-white/10 dark:text-white/68">
                                                         {project.status}
                                                     </span>
                                                 </div>
@@ -1104,7 +1104,7 @@ export default function Welcome({
                                                     href={project.url}
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/15 px-4 py-2 text-sm font-black transition hover:border-[#151614] hover:bg-[#151614] hover:text-white"
+                                                    className="inline-flex items-center gap-2 rounded-full border border-[#151614]/15 px-4 py-2 text-sm font-black transition hover:border-[#151614] hover:bg-[#151614] hover:text-white dark:border-white/12 dark:text-white/75 dark:hover:border-[#c6ff4a] dark:hover:bg-[#c6ff4a] dark:hover:text-[#151614]"
                                                 >
                                                     Visit
                                                     <ArrowUpRight className="size-4" />
@@ -1112,11 +1112,11 @@ export default function Welcome({
                                             ) : null}
                                         </div>
 
-                                        <p className="work-card-summary mt-5 text-base leading-7 text-[#4d554c]">
+                                        <p className="work-card-summary mt-5 text-base leading-7 text-[#4d554c] dark:text-white/66">
                                             {project.summary}
                                         </p>
                                         {project.impact ? (
-                                            <div className="work-card-impact mt-5 rounded-2xl bg-[#f3f5f0] p-4 text-sm leading-6 font-semibold text-[#343b32]">
+                                            <div className="work-card-impact mt-5 rounded-2xl bg-[#f3f5f0] p-4 text-sm leading-6 font-semibold text-[#343b32] dark:bg-white/[0.07] dark:text-white/74">
                                                 <span className="font-black">
                                                     Impact:
                                                 </span>{' '}
@@ -1128,7 +1128,7 @@ export default function Welcome({
                                                 (item) => (
                                                     <span
                                                         key={`${project.id}-${item}`}
-                                                        className="rounded-full border border-[#151614]/10 bg-[#fbfcf9] px-3 py-1.5 text-xs font-bold text-[#4f574c]"
+                                                        className="rounded-full border border-[#151614]/10 bg-[#fbfcf9] px-3 py-1.5 text-xs font-bold text-[#4f574c] dark:border-white/10 dark:bg-white/[0.06] dark:text-white/68"
                                                     >
                                                         {item}
                                                     </span>
@@ -1190,7 +1190,7 @@ export default function Welcome({
                                             className={cx(
                                                 'group rounded-[1.35rem] border p-5 text-left transition duration-300',
                                                 active
-                                                    ? 'border-[#c6ff4a] bg-white text-[#151614] shadow-[8px_8px_0_#1ed6c4]'
+                                                    ? 'border-[#c6ff4a] bg-[#c6ff4a] text-[#151614] shadow-[8px_8px_0_#1ed6c4]'
                                                     : 'border-white/10 bg-white/[0.06] text-white hover:border-white/35 hover:bg-white/[0.1]',
                                             )}
                                         >
@@ -1250,14 +1250,14 @@ export default function Welcome({
                                         </div>
                                     </div>
 
-                                    <div className="relative min-h-96 rounded-[1.5rem] border border-white/12 bg-[#f8f9f6] p-4 text-[#151614]">
-                                        <div className="absolute inset-4 rounded-[1.25rem] border border-dashed border-[#151614]/12" />
+                                    <div className="relative min-h-96 rounded-[1.5rem] border border-white/12 bg-[#f8f9f6] p-4 text-[#151614] dark:bg-[#171a17] dark:text-white">
+                                        <div className="absolute inset-4 rounded-[1.25rem] border border-dashed border-[#151614]/12 dark:border-white/12" />
                                         <div className="relative grid h-full gap-3 sm:grid-cols-2">
                                             {activeTechItems.map(
                                                 (item, index) => (
                                                     <div
                                                         key={`${activeCapability.title}-${item}`}
-                                                        className="capability-tech-node flex items-center gap-3 rounded-2xl border border-[#151614]/10 bg-white/86 p-3 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#151614]/30 hover:shadow-md"
+                                                        className="capability-tech-node flex items-center gap-3 rounded-2xl border border-[#151614]/10 bg-white/86 p-3 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#151614]/30 hover:shadow-md dark:border-white/10 dark:bg-white/[0.07] dark:hover:border-white/30"
                                                         style={{
                                                             transitionDelay: `${index * 35}ms`,
                                                         }}
@@ -1267,7 +1267,7 @@ export default function Welcome({
                                                             <span className="block truncate text-sm font-black">
                                                                 {item}
                                                             </span>
-                                                            <span className="block text-xs font-bold text-[#5c635b]">
+                                                            <span className="block text-xs font-bold text-[#5c635b] dark:text-white/48">
                                                                 Connected tool
                                                             </span>
                                                         </span>
@@ -1289,7 +1289,7 @@ export default function Welcome({
                 >
                     <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
                         <div>
-                            <p className="text-sm font-black tracking-[0.28em] text-[#5a6257] uppercase">
+                            <p className="text-sm font-black tracking-[0.28em] text-[#5a6257] uppercase dark:text-white/45">
                                 Experience
                             </p>
                             <h2 className="mt-4 text-4xl leading-[0.98] font-black tracking-[-0.06em] sm:text-6xl">
@@ -1300,23 +1300,23 @@ export default function Welcome({
                             {experiences.map((experience) => (
                                 <article
                                     key={experience.id}
-                                    className="rounded-[1.35rem] border border-[#151614]/10 bg-white p-6 shadow-sm"
+                                    className="rounded-[1.35rem] border border-[#151614]/10 bg-white p-6 text-[#151614] shadow-sm dark:border-white/12 dark:bg-[#171a17]/92 dark:text-white dark:shadow-[8px_8px_0_rgba(198,255,74,0.12)]"
                                 >
                                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                         <div>
                                             <h3 className="text-2xl font-black tracking-[-0.04em]">
                                                 {experience.role}
                                             </h3>
-                                            <p className="mt-1 font-bold text-[#4d554c]">
+                                            <p className="mt-1 font-bold text-[#4d554c] dark:text-white/62">
                                                 {experience.organization}
                                             </p>
                                         </div>
-                                        <span className="rounded-full bg-[#edf0e9] px-3 py-1.5 text-sm font-black text-[#394038]">
+                                        <span className="rounded-full bg-[#edf0e9] px-3 py-1.5 text-sm font-black text-[#394038] dark:bg-white/10 dark:text-white/68">
                                             {experience.period}
                                         </span>
                                     </div>
                                     {experience.summary ? (
-                                        <p className="mt-5 leading-7 text-[#4d554c]">
+                                        <p className="mt-5 leading-7 text-[#4d554c] dark:text-white/66">
                                             {experience.summary}
                                         </p>
                                     ) : null}
@@ -1325,7 +1325,7 @@ export default function Welcome({
                                             (bullet) => (
                                                 <li
                                                     key={bullet}
-                                                    className="flex gap-3 text-sm leading-6 text-[#4d554c]"
+                                                    className="flex gap-3 text-sm leading-6 text-[#4d554c] dark:text-white/64"
                                                 >
                                                     <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#119f92]" />
                                                     <span>{bullet}</span>
@@ -1344,7 +1344,7 @@ export default function Welcome({
                     data-reveal
                     className="relative z-10 px-5 pb-8 lg:px-8"
                 >
-                    <div className="mx-auto max-w-7xl rounded-[2rem] border border-[#151614] bg-[#c6ff4a] p-6 shadow-[-10px_10px_0_#151614] sm:p-10 lg:p-14">
+                    <div className="mx-auto max-w-7xl rounded-[2rem] border border-[#151614] bg-[#c6ff4a] p-6 text-[#151614] shadow-[-10px_10px_0_#151614] sm:p-10 lg:p-14 dark:border-[#c6ff4a] dark:shadow-[-10px_10px_0_rgba(30,214,196,0.42)]">
                         <div className="grid gap-8 lg:grid-cols-[1fr_0.78fr] lg:items-end">
                             <div>
                                 <p className="text-sm font-black tracking-[0.28em] text-[#38402c] uppercase">
@@ -1452,17 +1452,17 @@ export default function Welcome({
                 </section>
 
                 {chatOpen ? (
-                    <aside className="fixed right-4 bottom-24 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] shadow-[-10px_10px_0_#151614]">
-                        <div className="flex items-center justify-between border-b border-[#151614]/10 bg-white px-5 py-4">
+                    <aside className="fixed right-4 bottom-24 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] text-[#151614] shadow-[-10px_10px_0_#151614] dark:border-white/12 dark:bg-[#171a17] dark:text-white dark:shadow-[-10px_10px_0_rgba(198,255,74,0.35)]">
+                        <div className="flex items-center justify-between border-b border-[#151614]/10 bg-white px-5 py-4 dark:border-white/10 dark:bg-white/[0.06]">
                             <div className="flex items-center gap-3">
                                 <span className="grid size-10 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[4px_4px_0_#c6ff4a]">
-                                    <AppLogoIcon className="h-full w-full object-contain p-1.5" />
+                                    <AppLogoIcon className="h-full w-full object-contain p-1" />
                                 </span>
                                 <div>
                                     <p className="text-sm font-black">
                                         Chat with Michael
                                     </p>
-                                    <p className="text-xs font-semibold text-[#5c635b]">
+                                    <p className="text-xs font-semibold text-[#5c635b] dark:text-white/55">
                                         I usually reply as soon as I can.
                                     </p>
                                 </div>
@@ -1470,7 +1470,7 @@ export default function Welcome({
                             <button
                                 type="button"
                                 onClick={() => setChatOpen(false)}
-                                className="grid size-9 place-items-center rounded-full border border-[#151614]/10 bg-white"
+                                className="grid size-9 place-items-center rounded-full border border-[#151614]/10 bg-white dark:border-white/10 dark:bg-white/[0.08]"
                                 aria-label="Close chat"
                             >
                                 <X className="size-4" />
@@ -1499,7 +1499,7 @@ export default function Welcome({
                                     type="button"
                                     onClick={() => void loadOlderChatMessages()}
                                     disabled={chatLoadingOlder}
-                                    className="mx-auto flex rounded-full border border-[#151614]/10 bg-white px-4 py-2 text-xs font-black text-[#151614] disabled:opacity-60"
+                                    className="mx-auto flex rounded-full border border-[#151614]/10 bg-white px-4 py-2 text-xs font-black text-[#151614] disabled:opacity-60 dark:border-white/10 dark:bg-white/[0.08] dark:text-white"
                                 >
                                     {chatLoadingOlder
                                         ? 'Loading...'
@@ -1526,7 +1526,7 @@ export default function Welcome({
                                                 'max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-6',
                                                 fromVisitor
                                                     ? 'rounded-tr-sm bg-[#c6ff4a] text-[#151614]'
-                                                    : 'rounded-tl-sm bg-white text-[#151614] shadow-sm',
+                                                    : 'rounded-tl-sm bg-white text-[#151614] shadow-sm dark:bg-white/[0.08] dark:text-white',
                                             )}
                                         >
                                             <p className="whitespace-pre-wrap">
@@ -1548,7 +1548,7 @@ export default function Welcome({
                             })}
                         </div>
 
-                        <div className="border-t border-[#151614]/10 bg-white px-5 py-4">
+                        <div className="border-t border-[#151614]/10 bg-white px-5 py-4 dark:border-white/10 dark:bg-white/[0.06]">
                             {!conversationUuid ? (
                                 <div className="mb-3 grid gap-2 sm:grid-cols-2">
                                     <input
@@ -1557,7 +1557,7 @@ export default function Welcome({
                                             setChatName(event.target.value)
                                         }
                                         placeholder="Name"
-                                        className="rounded-xl border border-[#151614]/12 bg-[#f8f9f6] px-3 py-2 text-sm font-semibold outline-none focus:border-[#151614]"
+                                        className="rounded-xl border border-[#151614]/12 bg-[#f8f9f6] px-3 py-2 text-sm font-semibold outline-none focus:border-[#151614] dark:border-white/12 dark:bg-[#0f110f] dark:text-white dark:placeholder:text-white/35 dark:focus:border-[#c6ff4a]"
                                     />
                                     <input
                                         type="email"
@@ -1566,7 +1566,7 @@ export default function Welcome({
                                             setChatEmail(event.target.value)
                                         }
                                         placeholder="Email"
-                                        className="rounded-xl border border-[#151614]/12 bg-[#f8f9f6] px-3 py-2 text-sm font-semibold outline-none focus:border-[#151614]"
+                                        className="rounded-xl border border-[#151614]/12 bg-[#f8f9f6] px-3 py-2 text-sm font-semibold outline-none focus:border-[#151614] dark:border-white/12 dark:bg-[#0f110f] dark:text-white dark:placeholder:text-white/35 dark:focus:border-[#c6ff4a]"
                                     />
                                 </div>
                             ) : null}
@@ -1577,7 +1577,7 @@ export default function Welcome({
                                 }
                                 rows={3}
                                 placeholder="Tell me about your project or question..."
-                                className="w-full resize-none rounded-2xl border border-[#151614]/12 bg-[#f8f9f6] px-4 py-3 text-sm font-semibold outline-none focus:border-[#151614]"
+                                className="w-full resize-none rounded-2xl border border-[#151614]/12 bg-[#f8f9f6] px-4 py-3 text-sm font-semibold outline-none focus:border-[#151614] dark:border-white/12 dark:bg-[#0f110f] dark:text-white dark:placeholder:text-white/35 dark:focus:border-[#c6ff4a]"
                             />
                             {chatError ? (
                                 <p className="mt-2 text-xs font-bold text-red-600">
