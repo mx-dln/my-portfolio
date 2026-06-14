@@ -16,10 +16,12 @@ import {
     Send,
     MapPin,
     Menu,
+    Moon,
     Phone,
     ServerCog,
     ShieldCheck,
     Sparkles,
+    Sun,
     X,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -51,6 +53,7 @@ import {
     type SimpleIcon,
 } from 'simple-icons';
 import AppLogoIcon from '@/components/app-logo-icon';
+import { useAppearance } from '@/hooks/use-appearance';
 
 type Metric = {
     value: string;
@@ -387,6 +390,31 @@ function BrandIcon({ icon }: { icon: SimpleIcon }) {
     );
 }
 
+function ThemeToggle({
+    isDark,
+    onToggle,
+    compact = false,
+}: {
+    isDark: boolean;
+    onToggle: () => void;
+    compact?: boolean;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onToggle}
+            className={cx(
+                'inline-flex items-center justify-center gap-2 rounded-full border border-[#151614]/12 bg-white/72 font-black text-[#151614] shadow-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/[0.07] dark:text-white dark:hover:bg-white/[0.12]',
+                compact ? 'size-11' : 'px-4 py-2.5 text-sm',
+            )}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+            {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            {compact ? null : <span>{isDark ? 'Light' : 'Dark'}</span>}
+        </button>
+    );
+}
+
 function getCsrfToken() {
     return (
         document
@@ -418,6 +446,7 @@ export default function Welcome({
     experiences,
     skillGroups,
 }: WelcomeProps) {
+    const { resolvedAppearance, updateAppearance } = useAppearance();
     const [menuOpen, setMenuOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [activeCapabilityIndex, setActiveCapabilityIndex] = useState(0);
@@ -509,6 +538,11 @@ export default function Welcome({
         ['Experience', '#experience'],
         ['Contact', '#contact'],
     ];
+    const isDarkTheme = resolvedAppearance === 'dark';
+
+    function toggleTheme() {
+        updateAppearance(isDarkTheme ? 'light' : 'dark');
+    }
 
     function playChatSound() {
         chatSoundRef.current ??= new Audio(chatSoundUrl);
@@ -785,36 +819,36 @@ export default function Welcome({
     return (
         <>
             <Head title={`${profile.name} - ${profile.role}`} />
-            <main className="min-h-screen bg-[#f8f9f6] text-[#151614] selection:bg-[#c6ff4a] selection:text-[#151614]">
-                <div className="portfolio-bg-grid pointer-events-none fixed inset-0 z-0 [background-image:linear-gradient(rgba(21,22,20,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(21,22,20,0.08)_1px,transparent_1px)] [background-size:64px_64px] opacity-[0.45]" />
-                <div className="portfolio-bg-glow pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_12%,rgba(198,255,74,0.24),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(30,214,196,0.18),transparent_28%),radial-gradient(circle_at_65%_86%,rgba(255,91,91,0.12),transparent_24%)]" />
+            <main className="min-h-screen bg-[#f8f9f6] text-[#151614] transition-colors selection:bg-[#c6ff4a] selection:text-[#151614] dark:bg-[#0f110f] dark:text-[#f8f9f6]">
+                <div className="portfolio-bg-grid pointer-events-none fixed inset-0 z-0 [background-image:linear-gradient(rgba(21,22,20,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(21,22,20,0.08)_1px,transparent_1px)] [background-size:64px_64px] opacity-[0.45] dark:[background-image:linear-gradient(rgba(248,249,246,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(248,249,246,0.08)_1px,transparent_1px)]" />
+                <div className="portfolio-bg-glow pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_12%,rgba(198,255,74,0.24),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(30,214,196,0.18),transparent_28%),radial-gradient(circle_at_65%_86%,rgba(255,91,91,0.12),transparent_24%)] dark:bg-[radial-gradient(circle_at_18%_12%,rgba(198,255,74,0.16),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(30,214,196,0.16),transparent_28%),radial-gradient(circle_at_65%_86%,rgba(255,91,91,0.1),transparent_24%)]" />
                 <div className="portfolio-cursor-glow pointer-events-none fixed inset-0 z-[1]" />
 
                 <header
                     data-reveal="fade-down"
-                    className="reveal-delay-1 fixed top-0 right-0 left-0 z-50 border-b border-[#151614]/10 bg-[#f8f9f6]/82 backdrop-blur-xl"
+                    className="reveal-delay-1 fixed top-0 right-0 left-0 z-50 border-b border-[#151614]/10 bg-[#f8f9f6]/82 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-[#0f110f]/82"
                 >
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
                         <a href="#" className="group flex items-center gap-3">
-                            <span className="grid size-11 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5">
+                            <span className="grid size-11 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5 dark:border-white/20 dark:bg-white/10">
                                 <AppLogoIcon className="h-full w-full object-contain p-1.5" />
                             </span>
                             <span>
                                 <span className="block text-sm font-black tracking-[0.18em] uppercase">
                                     Michael De Leon
                                 </span>
-                                <span className="block text-xs text-[#5c635b]">
+                                <span className="block text-xs text-[#5c635b] dark:text-white/55">
                                     Full-stack systems engineer
                                 </span>
                             </span>
                         </a>
 
-                        <nav className="hidden items-center gap-1 rounded-full border border-[#151614]/10 bg-white/70 p-1 text-sm font-semibold lg:flex">
+                        <nav className="hidden items-center gap-1 rounded-full border border-[#151614]/10 bg-white/70 p-1 text-sm font-semibold lg:flex dark:border-white/10 dark:bg-white/[0.07]">
                             {navItems.map(([label, href]) => (
                                 <a
                                     key={href}
                                     href={href}
-                                    className="rounded-full px-4 py-2 text-[#3d433c] transition hover:bg-[#151614] hover:text-white"
+                                    className="rounded-full px-4 py-2 text-[#3d433c] transition hover:bg-[#151614] hover:text-white dark:text-white/70 dark:hover:bg-white dark:hover:text-[#151614]"
                                 >
                                     {label}
                                 </a>
@@ -822,6 +856,10 @@ export default function Welcome({
                         </nav>
 
                         <div className="hidden items-center gap-3 lg:flex">
+                            <ThemeToggle
+                                isDark={isDarkTheme}
+                                onToggle={toggleTheme}
+                            />
                             <a
                                 href={`mailto:${profile.email}`}
                                 className="inline-flex items-center gap-2 rounded-full bg-[#151614] px-5 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#1ed6c4] transition hover:-translate-y-0.5"
@@ -831,29 +869,36 @@ export default function Welcome({
                             </a>
                         </div>
 
-                        <button
-                            type="button"
-                            aria-label="Toggle navigation"
-                            onClick={() => setMenuOpen((open) => !open)}
-                            className="grid size-11 place-items-center rounded-full border border-[#151614]/15 bg-white lg:hidden"
-                        >
-                            {menuOpen ? (
-                                <X className="size-5" />
-                            ) : (
-                                <Menu className="size-5" />
-                            )}
-                        </button>
+                        <div className="flex items-center gap-2 lg:hidden">
+                            <ThemeToggle
+                                isDark={isDarkTheme}
+                                onToggle={toggleTheme}
+                                compact
+                            />
+                            <button
+                                type="button"
+                                aria-label="Toggle navigation"
+                                onClick={() => setMenuOpen((open) => !open)}
+                                className="grid size-11 place-items-center rounded-full border border-[#151614]/15 bg-white dark:border-white/10 dark:bg-white/[0.07]"
+                            >
+                                {menuOpen ? (
+                                    <X className="size-5" />
+                                ) : (
+                                    <Menu className="size-5" />
+                                )}
+                            </button>
+                        </div>
                     </div>
 
                     {menuOpen ? (
-                        <div className="border-t border-[#151614]/10 bg-[#f8f9f6] px-5 py-4 lg:hidden">
+                        <div className="border-t border-[#151614]/10 bg-[#f8f9f6] px-5 py-4 lg:hidden dark:border-white/10 dark:bg-[#0f110f]">
                             <div className="grid gap-2">
                                 {navItems.map(([label, href]) => (
                                     <a
                                         key={href}
                                         href={href}
                                         onClick={() => setMenuOpen(false)}
-                                        className="rounded-xl border border-[#151614]/10 bg-white px-4 py-3 font-bold"
+                                        className="rounded-xl border border-[#151614]/10 bg-white px-4 py-3 font-bold dark:border-white/10 dark:bg-white/[0.07]"
                                     >
                                         {label}
                                     </a>
@@ -867,7 +912,7 @@ export default function Welcome({
                     <div>
                         <div
                             data-reveal
-                            className="reveal-delay-2 mb-7 inline-flex items-center gap-3 rounded-full border border-[#151614]/12 bg-white/80 px-4 py-2 text-sm font-bold text-[#3d433c] shadow-sm"
+                            className="reveal-delay-2 mb-7 inline-flex items-center gap-3 rounded-full border border-[#151614]/12 bg-white/80 px-4 py-2 text-sm font-bold text-[#3d433c] shadow-sm dark:border-white/10 dark:bg-white/[0.07] dark:text-white/75"
                         >
                             <span className="size-2.5 rounded-full bg-[#1ed6c4] shadow-[0_0_0_6px_rgba(30,214,196,0.18)]" />
                             {profile.availability}
@@ -952,32 +997,29 @@ export default function Welcome({
                 {projectLogoStrip.length ? (
                     <section
                         data-reveal
-                        className="project-logo-strip relative z-10 overflow-hidden border-y border-[#151614]/10 bg-[#151614] py-7 text-white"
+                        className="project-logo-strip relative z-10 overflow-hidden border-y border-[#151614]/10 bg-white/35 py-8 text-[#151614] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.02] dark:text-white"
                     >
-                        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-[#151614] to-transparent" />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[#151614] to-transparent" />
-                        <div className="mx-auto mb-6 flex max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
-                            <p className="text-sm font-black tracking-[0.28em] text-white/70 uppercase">
-                                Project logos
-                            </p>
-                            <p className="hidden text-xs font-bold tracking-[0.18em] text-white/35 uppercase sm:block">
-                                Built, shipped, maintained
-                            </p>
-                        </div>
-                        <div className="project-logo-track flex w-max items-center gap-8 px-5 lg:px-8">
-                            {projectLogoStrip.map((project, index) => (
-                                <div
-                                    key={`${project.id}-${index}`}
-                                    className="grid h-24 w-56 shrink-0 place-items-center rounded-[1.4rem] border border-white/10 bg-white/[0.06] px-8 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur sm:w-64"
-                                    title={project.title}
-                                >
-                                    <img
-                                        src={project.logo_url ?? ''}
-                                        alt={`${project.title} logo`}
-                                        className="max-h-14 w-full max-w-44 object-contain sm:max-h-16 sm:max-w-52"
-                                    />
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_50%,rgba(198,255,74,0.2),transparent_26%),radial-gradient(circle_at_80%_50%,rgba(30,214,196,0.18),transparent_30%)] dark:bg-[radial-gradient(circle_at_18%_50%,rgba(198,255,74,0.1),transparent_28%),radial-gradient(circle_at_80%_50%,rgba(30,214,196,0.12),transparent_32%)]" />
+                        <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+                            <div className="relative overflow-hidden rounded-[1.75rem] border border-[#151614]/10 bg-white/72 py-5 shadow-[8px_8px_0_rgba(198,255,74,0.42)] backdrop-blur-xl dark:border-white/10 dark:bg-[#151614]/64 dark:shadow-[8px_8px_0_rgba(30,214,196,0.38)]">
+                                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-white/95 to-transparent dark:from-[#151614]" />
+                                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-white/95 to-transparent dark:from-[#151614]" />
+                                <div className="project-logo-track flex w-max items-center gap-16 px-10">
+                                    {projectLogoStrip.map((project, index) => (
+                                        <div
+                                            key={`${project.id}-${index}`}
+                                            className="grid h-20 w-48 shrink-0 place-items-center sm:w-56"
+                                            title={project.title}
+                                        >
+                                            <img
+                                                src={project.logo_url ?? ''}
+                                                alt={`${project.title} logo`}
+                                                className="project-logo-image max-h-16 w-full max-w-48 object-contain opacity-80 transition duration-300 hover:scale-105 hover:opacity-100 sm:max-h-[4.5rem] sm:max-w-52"
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
                         </div>
                     </section>
                 ) : null}

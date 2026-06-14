@@ -233,6 +233,14 @@
         animation-play-state: paused;
     }
 
+    .project-logo-image {
+        filter: brightness(0) saturate(0);
+    }
+
+    .dark .project-logo-image {
+        filter: brightness(0) invert(1);
+    }
+
     .portfolio-cursor-glow {
         background: radial-gradient(
             circle 420px at var(--portfolio-cursor-x, 50vw)

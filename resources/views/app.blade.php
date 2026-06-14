@@ -30,8 +30,8 @@
                 background-color: oklch(0.145 0 0);
             }
         </style>
-        <link rel="icon" href="/assets/image/logo.png" type="image/png">
-        <link rel="apple-touch-icon" href="/assets/image/logo.png">
+        <link rel="icon" href="/assets/image/md-no-bg.png" type="image/png">
+        <link rel="apple-touch-icon" href="/assets/image/md-no-bg.png">
 
         @fonts
 
