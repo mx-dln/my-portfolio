@@ -487,11 +487,8 @@ export default function Welcome({
     );
     const projectLogoStrip = useMemo(() => {
         const logoProjects = projects.filter((project) => project.logo_url);
-        const stripItems = logoProjects.length
-            ? logoProjects
-            : projects.slice(0, 8);
 
-        return stripItems.length ? [...stripItems, ...stripItems] : [];
+        return logoProjects.length ? [...logoProjects, ...logoProjects] : [];
     }, [projects]);
     const activeCapability = capabilityCards[activeCapabilityIndex] ?? {
         title: 'Full-stack delivery',
@@ -952,43 +949,38 @@ export default function Welcome({
                     </div>
                 </section>
 
-                <section
-                    data-reveal
-                    className="project-logo-strip relative z-10 overflow-hidden border-y border-[#151614]/10 bg-white/75"
-                >
-                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#f8f9f6] to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#f8f9f6] to-transparent" />
-                    <div className="project-logo-track flex w-max gap-4 px-5 py-5 lg:px-8">
-                        {projectLogoStrip.map((project, index) => (
-                            <div
-                                key={`${project.id}-${index}`}
-                                className="flex min-w-52 items-center gap-3 rounded-2xl border border-[#151614]/10 bg-white/80 px-4 py-3 shadow-sm"
-                            >
-                                <span className="grid size-12 place-items-center overflow-hidden rounded-xl border border-[#151614]/10 bg-[#f4f7ef]">
-                                    {project.logo_url ? (
-                                        <img
-                                            src={project.logo_url}
-                                            alt={`${project.title} logo`}
-                                            className="h-full w-full object-contain p-2"
-                                        />
-                                    ) : (
-                                        <span className="text-xs font-black tracking-[-0.03em]">
-                                            {project.title.slice(0, 2)}
-                                        </span>
-                                    )}
-                                </span>
-                                <span className="min-w-0">
-                                    <span className="block truncate text-sm font-black">
-                                        {project.title}
-                                    </span>
-                                    <span className="block truncate text-xs font-bold text-[#5c635b]">
-                                        {project.category}
-                                    </span>
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                {projectLogoStrip.length ? (
+                    <section
+                        data-reveal
+                        className="project-logo-strip relative z-10 overflow-hidden border-y border-[#151614]/10 bg-[#151614] py-7 text-white"
+                    >
+                        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-[#151614] to-transparent" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[#151614] to-transparent" />
+                        <div className="mx-auto mb-6 flex max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
+                            <p className="text-sm font-black tracking-[0.28em] text-white/70 uppercase">
+                                Project logos
+                            </p>
+                            <p className="hidden text-xs font-bold tracking-[0.18em] text-white/35 uppercase sm:block">
+                                Built, shipped, maintained
+                            </p>
+                        </div>
+                        <div className="project-logo-track flex w-max items-center gap-8 px-5 lg:px-8">
+                            {projectLogoStrip.map((project, index) => (
+                                <div
+                                    key={`${project.id}-${index}`}
+                                    className="grid h-24 w-56 shrink-0 place-items-center rounded-[1.4rem] border border-white/10 bg-white/[0.06] px-8 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur sm:w-64"
+                                    title={project.title}
+                                >
+                                    <img
+                                        src={project.logo_url ?? ''}
+                                        alt={`${project.title} logo`}
+                                        className="max-h-14 w-full max-w-44 object-contain sm:max-h-16 sm:max-w-52"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                ) : null}
 
                 <section
                     id="work"
