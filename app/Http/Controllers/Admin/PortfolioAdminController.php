@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PortfolioConversation;
 use App\Models\PortfolioExperience;
 use App\Models\PortfolioProfile;
 use App\Models\PortfolioProject;
@@ -22,6 +23,12 @@ class PortfolioAdminController extends Controller
             'projects' => PortfolioProject::query()->orderBy('sort_order')->get(),
             'experiences' => PortfolioExperience::query()->orderBy('sort_order')->get(),
             'skillGroups' => PortfolioSkillGroup::query()->orderBy('sort_order')->get(),
+            'conversations' => PortfolioConversation::query()
+                ->with('messages')
+                ->orderByDesc('last_message_at')
+                ->orderByDesc('created_at')
+                ->limit(30)
+                ->get(),
         ]);
     }
 
@@ -86,6 +93,21 @@ class PortfolioAdminController extends Controller
         return back()->with('success', 'Project removed.');
     }
 
+    public function replyToConversation(Request $request, PortfolioConversation $conversation): RedirectResponse
+    {
+        $data = $request->validate([
+            'body' => ['required', 'string', 'max:3000'],
+        ]);
+
+        $conversation->messages()->create([
+            'sender' => 'admin',
+            'body' => $data['body'],
+        ]);
+
+        $conversation->forceFill(['last_message_at' => now()])->save();
+
+        return back()->with('success', 'Reply sent.');
+    }
     /**
      * @return array<string, mixed>
      */

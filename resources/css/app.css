@@ -154,6 +154,16 @@
     }
 }
 
+@keyframes project-logo-marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
 @keyframes portfolio-glow-load {
     from {
         opacity: 0;
@@ -174,6 +184,26 @@
 
     .portfolio-bg-glow {
         animation: portfolio-glow-load 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .project-logo-track {
+        animation: project-logo-marquee 32s linear infinite;
+    }
+
+    .project-logo-strip:hover .project-logo-track {
+        animation-play-state: paused;
+    }
+
+    .portfolio-cursor-glow {
+        background: radial-gradient(
+            circle 420px at var(--portfolio-cursor-x, 50vw)
+                var(--portfolio-cursor-y, 34vh),
+            rgba(198, 255, 74, 0.18),
+            rgba(30, 214, 196, 0.1) 32%,
+            transparent 68%
+        );
+        opacity: 0.78;
+        transition: opacity 240ms ease;
     }
 
     .reveal-delay-1 {
@@ -278,9 +308,16 @@
         }
     }
 
+    @media (pointer: coarse) {
+        .portfolio-cursor-glow {
+            opacity: 0;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .portfolio-bg-grid,
-        .portfolio-bg-glow {
+        .portfolio-bg-glow,
+        .project-logo-track {
             animation: none;
         }
 

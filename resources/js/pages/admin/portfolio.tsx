@@ -5,7 +5,9 @@ import {
     CheckCircle2,
     ExternalLink,
     ImageIcon,
+    MessageCircle,
     Plus,
+    Send,
     Trash2,
 } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -52,11 +54,29 @@ type SkillGroup = {
     items: string[];
 };
 
+type PortfolioChatMessage = {
+    id: number;
+    sender: 'visitor' | 'admin';
+    body: string;
+    created_at?: string | null;
+};
+
+type PortfolioConversation = {
+    id: number;
+    uuid: string;
+    visitor_name?: string | null;
+    visitor_email?: string | null;
+    last_message_at?: string | null;
+    created_at?: string | null;
+    messages: PortfolioChatMessage[];
+};
+
 type PortfolioAdminProps = {
     profile: PortfolioProfile | null;
     projects: PortfolioProject[];
     experiences: PortfolioExperience[];
     skillGroups: SkillGroup[];
+    conversations: PortfolioConversation[];
 };
 
 const emptyProfile: PortfolioProfile = {
@@ -88,6 +108,58 @@ function FieldError({ error }: { error?: string }) {
     }
 
     return <p className="mt-1 text-sm font-medium text-red-600">{error}</p>;
+}
+
+function formatAdminDate(value?: string | null) {
+    if (!value) {
+        return 'No messages yet';
+    }
+
+    return new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+    }).format(new Date(value));
+}
+
+function ConversationReplyEditor({
+    conversation,
+}: {
+    conversation: PortfolioConversation;
+}) {
+    const form = useForm({
+        body: '',
+    });
+
+    function submit(event: FormEvent) {
+        event.preventDefault();
+        form.post(`/admin/portfolio/conversations/${conversation.id}/reply`, {
+            preserveScroll: true,
+            onSuccess: () => form.reset(),
+        });
+    }
+
+    return (
+        <form onSubmit={submit} className="mt-4 grid gap-3">
+            <textarea
+                value={form.data.body}
+                onChange={(event) => form.setData('body', event.target.value)}
+                rows={3}
+                placeholder="Write a reply..."
+                className={fieldClass(form.errors.body)}
+            />
+            <FieldError error={form.errors.body} />
+            <button
+                type="submit"
+                disabled={form.processing || !form.data.body.trim()}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-neutral-950 px-5 py-3 text-sm font-black text-white disabled:opacity-60"
+            >
+                Reply
+                <Send className="size-4" />
+            </button>
+        </form>
+    );
 }
 
 function ProjectEditor({ project }: { project: PortfolioProject }) {
@@ -323,6 +395,7 @@ export default function PortfolioAdmin({
     projects,
     experiences,
     skillGroups,
+    conversations,
 }: PortfolioAdminProps) {
     const profileForm = useForm({
         name: profile?.name ?? emptyProfile.name,
@@ -398,7 +471,7 @@ export default function PortfolioAdmin({
                         </div>
                     </section>
 
-                    <section className="grid gap-4 md:grid-cols-4">
+                    <section className="grid gap-4 md:grid-cols-5">
                         {[
                             ['Projects', projects.length],
                             [
@@ -408,6 +481,7 @@ export default function PortfolioAdmin({
                             ],
                             ['Experience', experiences.length],
                             ['Skill groups', skillGroups.length],
+                            ['Messages', conversations.length],
                         ].map(([label, value]) => (
                             <div
                                 key={label}
@@ -421,6 +495,120 @@ export default function PortfolioAdmin({
                                 </p>
                             </div>
                         ))}
+                    </section>
+
+                    <section className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center gap-3">
+                                <span className="grid size-11 place-items-center rounded-full bg-neutral-950 text-white">
+                                    <MessageCircle className="size-5" />
+                                </span>
+                                <div>
+                                    <p className="text-sm font-black tracking-[0.22em] text-neutral-500 uppercase">
+                                        Client messages
+                                    </p>
+                                    <h2 className="mt-1 text-2xl font-black tracking-[-0.04em]">
+                                        Portfolio inbox
+                                    </h2>
+                                </div>
+                            </div>
+                            <p className="max-w-xl text-sm leading-6 font-semibold text-neutral-500">
+                                Messages from the floating website chat appear
+                                here. Reply from this panel and visitors will
+                                see your response when they reopen the chat.
+                            </p>
+                        </div>
+
+                        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                            {conversations.length ? (
+                                conversations.map((conversation) => (
+                                    <article
+                                        key={conversation.id}
+                                        className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 dark:border-neutral-800 dark:bg-neutral-950"
+                                    >
+                                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                            <div>
+                                                <h3 className="text-lg font-black tracking-[-0.03em]">
+                                                    {conversation.visitor_name ||
+                                                        'Portfolio visitor'}
+                                                </h3>
+                                                <p className="mt-1 text-sm font-semibold text-neutral-500">
+                                                    {conversation.visitor_email ||
+                                                        'No email provided'}
+                                                </p>
+                                            </div>
+                                            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-neutral-500 dark:bg-neutral-900">
+                                                {formatAdminDate(
+                                                    conversation.last_message_at ??
+                                                        conversation.created_at,
+                                                )}
+                                            </span>
+                                        </div>
+
+                                        <div className="mt-5 max-h-80 space-y-3 overflow-y-auto pr-1">
+                                            {conversation.messages.map(
+                                                (message) => {
+                                                    const visitor =
+                                                        message.sender ===
+                                                        'visitor';
+
+                                                    return (
+                                                        <div
+                                                            key={message.id}
+                                                            className={[
+                                                                'flex',
+                                                                visitor
+                                                                    ? 'justify-start'
+                                                                    : 'justify-end',
+                                                            ].join(' ')}
+                                                        >
+                                                            <div
+                                                                className={[
+                                                                    'max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-6',
+                                                                    visitor
+                                                                        ? 'rounded-tl-sm bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-100'
+                                                                        : 'rounded-tr-sm bg-lime-300 text-neutral-950',
+                                                                ].join(' ')}
+                                                            >
+                                                                <p className="whitespace-pre-wrap">
+                                                                    {
+                                                                        message.body
+                                                                    }
+                                                                </p>
+                                                                <p className="mt-2 text-[0.68rem] font-black opacity-50">
+                                                                    {visitor
+                                                                        ? 'Visitor'
+                                                                        : 'You'}{' '}
+                                                                    -{' '}
+                                                                    {formatAdminDate(
+                                                                        message.created_at,
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                },
+                                            )}
+                                        </div>
+
+                                        <ConversationReplyEditor
+                                            conversation={conversation}
+                                        />
+                                    </article>
+                                ))
+                            ) : (
+                                <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center lg:col-span-2 dark:border-neutral-800 dark:bg-neutral-950">
+                                    <MessageCircle className="mx-auto size-10 text-neutral-400" />
+                                    <h3 className="mt-3 text-xl font-black tracking-[-0.03em]">
+                                        No messages yet
+                                    </h3>
+                                    <p className="mt-2 text-sm font-semibold text-neutral-500">
+                                        New chat conversations from the public
+                                        portfolio will land here.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </section>
 
                     <form

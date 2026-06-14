@@ -10,7 +10,10 @@ import {
     Globe2,
     Layers3,
     Linkedin,
+    LoaderCircle,
     Mail,
+    MessageCircle,
+    Send,
     MapPin,
     Menu,
     Phone,
@@ -20,6 +23,7 @@ import {
     X,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import AppLogoIcon from '@/components/app-logo-icon';
 
 type Metric = {
     value: string;
@@ -53,6 +57,7 @@ type PortfolioProject = {
     category: string;
     year: string;
     url?: string | null;
+    logo_url?: string | null;
     summary: string;
     impact?: string | null;
     stack?: string[] | null;
@@ -75,6 +80,13 @@ type SkillGroup = {
     items: string[];
 };
 
+type ChatMessage = {
+    id: number;
+    sender: 'visitor' | 'admin';
+    body: string;
+    created_at?: string | null;
+};
+
 type WelcomeProps = {
     profile: PortfolioProfile;
     projects: PortfolioProject[];
@@ -92,6 +104,104 @@ const iconMap = [
     Layers3,
 ];
 
+const openingChatMessage = `Let's Connect.
+
+Thank you for taking the time to explore my portfolio. Every project showcased here represents my passion for creating innovative software solutions that solve real-world problems.
+
+If you have a project in mind, a collaboration opportunity, or simply want to discuss technology, feel free to send me a message. I'm always open to new challenges and exciting ideas.
+
+I look forward to hearing from you.`;
+
+const techIconStyles = [
+    { keywords: ['laravel'], label: 'Lv', bg: '#fff0ed', fg: '#ff2d20' },
+    { keywords: ['react'], label: 'Re', bg: '#e8fbff', fg: '#149eca' },
+    { keywords: ['flutter'], label: 'Fl', bg: '#edf6ff', fg: '#0468d7' },
+    { keywords: ['php'], label: 'PHP', bg: '#eeefff', fg: '#4f5b93' },
+    { keywords: ['python'], label: 'Py', bg: '#fff7df', fg: '#3776ab' },
+    { keywords: ['mysql'], label: 'SQL', bg: '#eaf6ff', fg: '#00618a' },
+    { keywords: ['tailwind'], label: 'Tw', bg: '#e8fffb', fg: '#0f9f9a' },
+    { keywords: ['api'], label: 'API', bg: '#eef6ed', fg: '#2d6a4f' },
+    {
+        keywords: ['ai', 'openai', 'ollama', 'langchain'],
+        label: 'AI',
+        bg: '#f1edff',
+        fg: '#6d28d9',
+    },
+    {
+        keywords: ['gis', 'geo', 'map'],
+        label: 'GIS',
+        bg: '#ecfdf3',
+        fg: '#16803c',
+    },
+    {
+        keywords: ['iot', 'raspberry', 'kiosk'],
+        label: 'IoT',
+        bg: '#fff4e6',
+        fg: '#c2410c',
+    },
+    { keywords: ['payment'], label: 'Pay', bg: '#f3f5f0', fg: '#151614' },
+    { keywords: ['sms'], label: 'SMS', bg: '#fef2f2', fg: '#dc2626' },
+];
+
+function techIconFor(name: string) {
+    const normalized = name.toLowerCase();
+    const match = techIconStyles.find((style) =>
+        style.keywords.some((keyword) => normalized.includes(keyword)),
+    );
+
+    if (match) {
+        return match;
+    }
+
+    const label = name
+        .split(/\s+|-/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((word) => word[0])
+        .join('')
+        .toUpperCase();
+
+    return {
+        label: label || name.slice(0, 2).toUpperCase(),
+        bg: '#f4f7ef',
+        fg: '#151614',
+    };
+}
+
+function TechIcon({ name }: { name: string }) {
+    const icon = techIconFor(name);
+
+    return (
+        <span
+            className="grid size-11 shrink-0 place-items-center rounded-2xl text-[0.68rem] font-black tracking-[-0.03em] shadow-[inset_0_0_0_1px_rgba(21,22,20,0.08)]"
+            style={{ backgroundColor: icon.bg, color: icon.fg }}
+        >
+            {icon.label}
+        </span>
+    );
+}
+
+function getCsrfToken() {
+    return (
+        document
+            .querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+            ?.getAttribute('content') ?? ''
+    );
+}
+
+function formatChatTime(value?: string | null) {
+    if (!value) {
+        return '';
+    }
+
+    return new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+    }).format(new Date(value));
+}
+
 function cx(...classes: Array<string | false | null | undefined>) {
     return classes.filter(Boolean).join(' ');
 }
@@ -107,9 +217,48 @@ export default function Welcome({
     };
     const [menuOpen, setMenuOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
+    const [activeCapabilityIndex, setActiveCapabilityIndex] = useState(0);
+    const [chatOpen, setChatOpen] = useState(false);
+    const [conversationUuid, setConversationUuid] = useState<string | null>(
+        null,
+    );
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [chatName, setChatName] = useState('');
+    const [chatEmail, setChatEmail] = useState('');
+    const [chatBody, setChatBody] = useState('');
+    const [chatSending, setChatSending] = useState(false);
+    const [chatError, setChatError] = useState<string | null>(null);
 
     const metrics = profile.metrics ?? [];
     const services = profile.services ?? [];
+    const capabilityCards = useMemo(() => {
+        const fallbackServices = skillGroups.map((group) => ({
+            title: group.name,
+            body: group.items.join(', '),
+        }));
+        const lanes = services.length ? services : fallbackServices;
+        const labels = [
+            'Product layer',
+            'Field layer',
+            'Automation layer',
+            'Launch layer',
+        ];
+        const accents = ['#c6ff4a', '#1ed6c4', '#ff5b5b', '#ffffff'];
+
+        return lanes.map((service, index) => {
+            const group = skillGroups.length
+                ? skillGroups[index % skillGroups.length]
+                : null;
+
+            return {
+                ...service,
+                accent: accents[index % accents.length],
+                items: group?.items.slice(0, 8) ?? [],
+                label: labels[index % labels.length],
+                number: String(index + 1).padStart(2, '0'),
+            };
+        });
+    }, [services, skillGroups]);
     const categories = useMemo(
         () => [
             'All',
@@ -126,12 +275,157 @@ export default function Welcome({
                   ),
         [projects, selectedCategory],
     );
+    const projectLogoStrip = useMemo(() => {
+        const logoProjects = projects.filter((project) => project.logo_url);
+        const stripItems = logoProjects.length
+            ? logoProjects
+            : projects.slice(0, 8);
+
+        return stripItems.length ? [...stripItems, ...stripItems] : [];
+    }, [projects]);
+    const activeCapability = capabilityCards[activeCapabilityIndex] ?? {
+        title: 'Full-stack delivery',
+        body: 'Practical software delivery across web, mobile, data, automation, and deployment.',
+        accent: '#c6ff4a',
+        items: ['Laravel', 'React', 'Flutter', 'PHP', 'Python', 'MySQL'],
+        label: 'Delivery layer',
+        number: '01',
+    };
+    const activeTechItems = activeCapability.items.length
+        ? activeCapability.items
+        : Array.from(
+              new Set(projects.flatMap((project) => project.stack ?? [])),
+          ).slice(0, 9);
     const navItems = [
         ['Work', '#work'],
         ['Stack', '#stack'],
         ['Experience', '#experience'],
         ['Contact', '#contact'],
     ];
+
+    async function loadChat(uuid: string) {
+        const response = await fetch(`/portfolio-chat/${uuid}`, {
+            headers: { Accept: 'application/json' },
+            credentials: 'same-origin',
+        });
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = (await response.json()) as {
+            conversation_uuid: string;
+            messages: ChatMessage[];
+        };
+
+        setConversationUuid(data.conversation_uuid);
+        setChatMessages(data.messages ?? []);
+    }
+
+    async function sendChatMessage() {
+        if (!chatBody.trim() || chatSending) {
+            return;
+        }
+
+        setChatSending(true);
+        setChatError(null);
+
+        try {
+            const response = await fetch('/portfolio-chat', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    conversation_uuid: conversationUuid,
+                    visitor_name: chatName || undefined,
+                    visitor_email: chatEmail || undefined,
+                    body: chatBody,
+                }),
+            });
+
+            if (!response.ok) {
+                const data = (await response.json().catch(() => null)) as {
+                    message?: string;
+                } | null;
+
+                throw new Error(data?.message ?? 'Message could not be sent.');
+            }
+
+            const data = (await response.json()) as {
+                conversation_uuid: string;
+                messages: ChatMessage[];
+            };
+
+            window.localStorage.setItem(
+                'portfolio-chat-conversation',
+                data.conversation_uuid,
+            );
+            setConversationUuid(data.conversation_uuid);
+            setChatMessages(data.messages ?? []);
+            setChatBody('');
+        } catch (error) {
+            setChatError(
+                error instanceof Error
+                    ? error.message
+                    : 'Message could not be sent.',
+            );
+        } finally {
+            setChatSending(false);
+        }
+    }
+
+    useEffect(() => {
+        if (activeCapabilityIndex >= capabilityCards.length) {
+            setActiveCapabilityIndex(0);
+        }
+    }, [activeCapabilityIndex, capabilityCards.length]);
+
+    useEffect(() => {
+        const storedUuid = window.localStorage.getItem(
+            'portfolio-chat-conversation',
+        );
+
+        if (storedUuid) {
+            setConversationUuid(storedUuid);
+            void loadChat(storedUuid);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!chatOpen || !conversationUuid) {
+            return;
+        }
+
+        const interval = window.setInterval(() => {
+            void loadChat(conversationUuid);
+        }, 12000);
+
+        return () => window.clearInterval(interval);
+    }, [chatOpen, conversationUuid]);
+
+    useEffect(() => {
+        const updatePointer = (event: PointerEvent) => {
+            document.documentElement.style.setProperty(
+                '--portfolio-cursor-x',
+                `${event.clientX}px`,
+            );
+            document.documentElement.style.setProperty(
+                '--portfolio-cursor-y',
+                `${event.clientY}px`,
+            );
+        };
+
+        window.addEventListener('pointermove', updatePointer, {
+            passive: true,
+        });
+
+        return () => window.removeEventListener('pointermove', updatePointer);
+    }, []);
 
     useEffect(() => {
         const elements = Array.from(
@@ -193,6 +487,7 @@ export default function Welcome({
             <main className="min-h-screen bg-[#f8f9f6] text-[#151614] selection:bg-[#c6ff4a] selection:text-[#151614]">
                 <div className="portfolio-bg-grid pointer-events-none fixed inset-0 z-0 [background-image:linear-gradient(rgba(21,22,20,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(21,22,20,0.08)_1px,transparent_1px)] [background-size:64px_64px] opacity-[0.45]" />
                 <div className="portfolio-bg-glow pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_12%,rgba(198,255,74,0.24),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(30,214,196,0.18),transparent_28%),radial-gradient(circle_at_65%_86%,rgba(255,91,91,0.12),transparent_24%)]" />
+                <div className="portfolio-cursor-glow pointer-events-none fixed inset-0 z-[1]" />
 
                 <header
                     data-reveal="fade-down"
@@ -200,8 +495,8 @@ export default function Welcome({
                 >
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
                         <a href="#" className="group flex items-center gap-3">
-                            <span className="grid size-10 place-items-center rounded-full border border-[#151614] bg-[#151614] text-sm font-black tracking-[-0.04em] text-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5">
-                                MD
+                            <span className="grid size-11 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[5px_5px_0_#c6ff4a] transition-transform group-hover:-translate-y-0.5">
+                                <AppLogoIcon className="h-full w-full object-contain p-1.5" />
                             </span>
                             <span>
                                 <span className="block text-sm font-black tracking-[0.18em] uppercase">
@@ -233,14 +528,7 @@ export default function Welcome({
                                 >
                                     Dashboard
                                 </Link>
-                            ) : (
-                                <Link
-                                    href="/login"
-                                    className="rounded-full border border-[#151614]/15 bg-white px-4 py-2 text-sm font-bold text-[#151614] transition hover:border-[#151614]"
-                                >
-                                    Admin login
-                                </Link>
-                            )}
+                            ) : null}
                             <a
                                 href={`mailto:${profile.email}`}
                                 className="inline-flex items-center gap-2 rounded-full bg-[#151614] px-5 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#1ed6c4] transition hover:-translate-y-0.5"
@@ -277,12 +565,14 @@ export default function Welcome({
                                         {label}
                                     </a>
                                 ))}
-                                <Link
-                                    href={auth.user ? '/dashboard' : '/login'}
-                                    className="rounded-xl border border-[#151614]/10 bg-white px-4 py-3 font-bold"
-                                >
-                                    {auth.user ? 'Dashboard' : 'Admin login'}
-                                </Link>
+                                {auth.user ? (
+                                    <Link
+                                        href="/dashboard"
+                                        className="rounded-xl border border-[#151614]/10 bg-white px-4 py-3 font-bold"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : null}
                             </div>
                         </div>
                     ) : null}
@@ -376,13 +666,39 @@ export default function Welcome({
 
                 <section
                     data-reveal
-                    className="relative z-10 border-y border-[#151614]/10 bg-white/75"
+                    className="project-logo-strip relative z-10 overflow-hidden border-y border-[#151614]/10 bg-white/75"
                 >
-                    <div className="mx-auto grid max-w-7xl gap-4 px-5 py-7 text-sm font-black tracking-[0.22em] text-[#5c635b] uppercase sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
-                        <span>Government systems</span>
-                        <span>Healthcare workflows</span>
-                        <span>E-commerce platforms</span>
-                        <span>AI and automation</span>
+                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#f8f9f6] to-transparent" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#f8f9f6] to-transparent" />
+                    <div className="project-logo-track flex w-max gap-4 px-5 py-5 lg:px-8">
+                        {projectLogoStrip.map((project, index) => (
+                            <div
+                                key={`${project.id}-${index}`}
+                                className="flex min-w-52 items-center gap-3 rounded-2xl border border-[#151614]/10 bg-white/80 px-4 py-3 shadow-sm"
+                            >
+                                <span className="grid size-12 place-items-center overflow-hidden rounded-xl border border-[#151614]/10 bg-[#f4f7ef]">
+                                    {project.logo_url ? (
+                                        <img
+                                            src={project.logo_url}
+                                            alt={`${project.title} logo`}
+                                            className="h-full w-full object-contain p-2"
+                                        />
+                                    ) : (
+                                        <span className="text-xs font-black tracking-[-0.03em]">
+                                            {project.title.slice(0, 2)}
+                                        </span>
+                                    )}
+                                </span>
+                                <span className="min-w-0">
+                                    <span className="block truncate text-sm font-black">
+                                        {project.title}
+                                    </span>
+                                    <span className="block truncate text-xs font-bold text-[#5c635b]">
+                                        {project.category}
+                                    </span>
+                                </span>
+                            </div>
+                        ))}
                     </div>
                 </section>
 
@@ -507,63 +823,139 @@ export default function Welcome({
                 <section
                     id="stack"
                     data-reveal
-                    className="relative z-10 bg-[#151614] px-5 py-24 text-white lg:px-8"
+                    className="relative z-10 overflow-hidden bg-[#151614] px-5 py-24 text-white lg:px-8"
                 >
-                    <div className="mx-auto max-w-7xl">
-                        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-                            <div>
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,rgba(198,255,74,0.18),transparent_30%),radial-gradient(circle_at_84%_18%,rgba(30,214,196,0.22),transparent_28%),linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:auto,auto,64px_64px,64px_64px]" />
+                    <div className="relative mx-auto max-w-7xl">
+                        <div className="grid items-end gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+                            <div data-reveal>
                                 <p className="text-sm font-black tracking-[0.28em] text-[#1ed6c4] uppercase">
                                     Capability map
                                 </p>
                                 <h2 className="mt-4 text-4xl leading-[0.98] font-black tracking-[-0.06em] sm:text-6xl">
-                                    Practical stack, broad enough to own the
-                                    whole product.
+                                    Pick a capability. Watch the tools connect.
                                 </h2>
                             </div>
-                            <div className="grid gap-3 sm:grid-cols-2">
-                                {services.map((service) => (
-                                    <div
-                                        key={service.title}
-                                        className="rounded-[1.25rem] border border-white/10 bg-white/[0.06] p-5"
-                                    >
-                                        <CheckCircle2 className="mb-4 size-5 text-[#c6ff4a]" />
-                                        <h3 className="text-lg font-black tracking-[-0.03em]">
-                                            {service.title}
-                                        </h3>
-                                        <p className="mt-3 text-sm leading-6 text-white/68">
-                                            {service.body}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
+                            <p className="text-lg leading-8 text-white/68">
+                                A compact systems map of how I move from product
+                                idea to interface, data, automation, deployment,
+                                and support. Tap or hover each lane to reshape
+                                the map.
+                            </p>
                         </div>
 
-                        <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                            {skillGroups.map((group, index) => {
-                                const Icon = iconMap[index % iconMap.length];
+                        <div className="mt-12 grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
+                            <div className="grid gap-3">
+                                {capabilityCards.map((capability, index) => {
+                                    const Icon =
+                                        iconMap[index % iconMap.length];
+                                    const active =
+                                        index === activeCapabilityIndex;
 
-                                return (
-                                    <div
-                                        key={group.id}
-                                        className="rounded-[1.25rem] border border-white/10 bg-[#20231f] p-5"
-                                    >
-                                        <Icon className="mb-5 size-6 text-[#c6ff4a]" />
-                                        <h3 className="text-xl font-black tracking-[-0.04em]">
-                                            {group.name}
-                                        </h3>
-                                        <div className="mt-5 flex flex-wrap gap-2">
-                                            {group.items.map((item) => (
-                                                <span
-                                                    key={`${group.id}-${item}`}
-                                                    className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-white/78"
-                                                >
-                                                    {item}
+                                    return (
+                                        <button
+                                            key={`${capability.title}-${index}`}
+                                            type="button"
+                                            onClick={() =>
+                                                setActiveCapabilityIndex(index)
+                                            }
+                                            onFocus={() =>
+                                                setActiveCapabilityIndex(index)
+                                            }
+                                            onMouseEnter={() =>
+                                                setActiveCapabilityIndex(index)
+                                            }
+                                            className={cx(
+                                                'group rounded-[1.35rem] border p-5 text-left transition duration-300',
+                                                active
+                                                    ? 'border-[#c6ff4a] bg-white text-[#151614] shadow-[8px_8px_0_#1ed6c4]'
+                                                    : 'border-white/10 bg-white/[0.06] text-white hover:border-white/35 hover:bg-white/[0.1]',
+                                            )}
+                                        >
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-3">
+                                                    <span
+                                                        className="grid size-12 place-items-center rounded-2xl border border-current/10"
+                                                        style={{
+                                                            backgroundColor:
+                                                                active
+                                                                    ? capability.accent
+                                                                    : 'rgba(255,255,255,0.07)',
+                                                        }}
+                                                    >
+                                                        <Icon className="size-5" />
+                                                    </span>
+                                                    <div>
+                                                        <p className="text-xs font-black tracking-[0.22em] uppercase opacity-60">
+                                                            {capability.label}
+                                                        </p>
+                                                        <h3 className="mt-1 text-xl font-black tracking-[-0.04em]">
+                                                            {capability.title}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <span className="text-sm font-black opacity-50">
+                                                    {capability.number}
                                                 </span>
-                                            ))}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="capability-map-panel relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.07] p-5 shadow-[12px_12px_0_rgba(198,255,74,0.2)] backdrop-blur sm:p-8">
+                                <div
+                                    className="pointer-events-none absolute inset-0 opacity-75"
+                                    style={{
+                                        background: `radial-gradient(circle at 52% 45%, ${activeCapability.accent}33, transparent 34%), radial-gradient(circle at 82% 18%, rgba(30,214,196,0.22), transparent 28%)`,
+                                    }}
+                                />
+                                <div className="relative grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
+                                    <div className="rounded-[1.5rem] border border-white/12 bg-[#10110f]/82 p-6">
+                                        <p className="text-xs font-black tracking-[0.25em] text-white/45 uppercase">
+                                            Active lane
+                                        </p>
+                                        <h3 className="mt-4 text-4xl leading-none font-black tracking-[-0.06em]">
+                                            {activeCapability.title}
+                                        </h3>
+                                        <p className="mt-5 text-base leading-7 text-white/68">
+                                            {activeCapability.body}
+                                        </p>
+                                        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm leading-6 font-semibold text-white/72">
+                                            Built for delivery that survives
+                                            real users, real data, and changing
+                                            requirements.
                                         </div>
                                     </div>
-                                );
-                            })}
+
+                                    <div className="relative min-h-96 rounded-[1.5rem] border border-white/12 bg-[#f8f9f6] p-4 text-[#151614]">
+                                        <div className="absolute inset-4 rounded-[1.25rem] border border-dashed border-[#151614]/12" />
+                                        <div className="relative grid h-full gap-3 sm:grid-cols-2">
+                                            {activeTechItems.map(
+                                                (item, index) => (
+                                                    <div
+                                                        key={`${activeCapability.title}-${item}`}
+                                                        className="capability-tech-node flex items-center gap-3 rounded-2xl border border-[#151614]/10 bg-white/86 p-3 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#151614]/30 hover:shadow-md"
+                                                        style={{
+                                                            transitionDelay: `${index * 35}ms`,
+                                                        }}
+                                                    >
+                                                        <TechIcon name={item} />
+                                                        <span className="min-w-0">
+                                                            <span className="block truncate text-sm font-black">
+                                                                {item}
+                                                            </span>
+                                                            <span className="block text-xs font-bold text-[#5c635b]">
+                                                                Connected tool
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                ),
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -714,6 +1106,149 @@ export default function Welcome({
                         </div>
                     </div>
                 </section>
+
+                {chatOpen ? (
+                    <aside className="fixed bottom-24 left-4 z-[60] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-[1.5rem] border border-[#151614] bg-[#f8f9f6] shadow-[10px_10px_0_#151614]">
+                        <div className="flex items-center justify-between border-b border-[#151614]/10 bg-white px-5 py-4">
+                            <div className="flex items-center gap-3">
+                                <span className="grid size-10 place-items-center overflow-hidden rounded-full border border-[#151614] bg-white shadow-[4px_4px_0_#c6ff4a]">
+                                    <AppLogoIcon className="h-full w-full object-contain p-1.5" />
+                                </span>
+                                <div>
+                                    <p className="text-sm font-black">
+                                        Chat with Michael
+                                    </p>
+                                    <p className="text-xs font-semibold text-[#5c635b]">
+                                        I usually reply from the admin panel.
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setChatOpen(false)}
+                                className="grid size-9 place-items-center rounded-full border border-[#151614]/10 bg-white"
+                                aria-label="Close chat"
+                            >
+                                <X className="size-4" />
+                            </button>
+                        </div>
+
+                        <div className="max-h-[24rem] space-y-3 overflow-y-auto px-5 py-4">
+                            <div className="max-w-[88%] rounded-2xl rounded-tl-sm bg-[#151614] px-4 py-3 text-sm leading-6 text-white">
+                                {openingChatMessage
+                                    .split('\n\n')
+                                    .map((paragraph) => (
+                                        <p
+                                            key={paragraph}
+                                            className="mb-3 last:mb-0"
+                                        >
+                                            {paragraph}
+                                        </p>
+                                    ))}
+                            </div>
+
+                            {chatMessages.map((message) => {
+                                const fromVisitor =
+                                    message.sender === 'visitor';
+
+                                return (
+                                    <div
+                                        key={message.id}
+                                        className={cx(
+                                            'flex',
+                                            fromVisitor
+                                                ? 'justify-end'
+                                                : 'justify-start',
+                                        )}
+                                    >
+                                        <div
+                                            className={cx(
+                                                'max-w-[86%] rounded-2xl px-4 py-3 text-sm leading-6',
+                                                fromVisitor
+                                                    ? 'rounded-tr-sm bg-[#c6ff4a] text-[#151614]'
+                                                    : 'rounded-tl-sm bg-white text-[#151614] shadow-sm',
+                                            )}
+                                        >
+                                            <p className="whitespace-pre-wrap">
+                                                {message.body}
+                                            </p>
+                                            <p className="mt-2 text-[0.68rem] font-bold opacity-55">
+                                                {fromVisitor
+                                                    ? 'You'
+                                                    : 'Michael'}
+                                                {formatChatTime(
+                                                    message.created_at,
+                                                )
+                                                    ? ` - ${formatChatTime(message.created_at)}`
+                                                    : ''}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="border-t border-[#151614]/10 bg-white px-5 py-4">
+                            {!conversationUuid ? (
+                                <div className="mb-3 grid gap-2 sm:grid-cols-2">
+                                    <input
+                                        value={chatName}
+                                        onChange={(event) =>
+                                            setChatName(event.target.value)
+                                        }
+                                        placeholder="Name"
+                                        className="rounded-xl border border-[#151614]/12 bg-[#f8f9f6] px-3 py-2 text-sm font-semibold outline-none focus:border-[#151614]"
+                                    />
+                                    <input
+                                        type="email"
+                                        value={chatEmail}
+                                        onChange={(event) =>
+                                            setChatEmail(event.target.value)
+                                        }
+                                        placeholder="Email"
+                                        className="rounded-xl border border-[#151614]/12 bg-[#f8f9f6] px-3 py-2 text-sm font-semibold outline-none focus:border-[#151614]"
+                                    />
+                                </div>
+                            ) : null}
+                            <textarea
+                                value={chatBody}
+                                onChange={(event) =>
+                                    setChatBody(event.target.value)
+                                }
+                                rows={3}
+                                placeholder="Tell me about your project or question..."
+                                className="w-full resize-none rounded-2xl border border-[#151614]/12 bg-[#f8f9f6] px-4 py-3 text-sm font-semibold outline-none focus:border-[#151614]"
+                            />
+                            {chatError ? (
+                                <p className="mt-2 text-xs font-bold text-red-600">
+                                    {chatError}
+                                </p>
+                            ) : null}
+                            <button
+                                type="button"
+                                onClick={() => void sendChatMessage()}
+                                disabled={chatSending || !chatBody.trim()}
+                                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[5px_5px_0_#1ed6c4] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {chatSending ? (
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                ) : (
+                                    <Send className="size-4" />
+                                )}
+                                Send message
+                            </button>
+                        </div>
+                    </aside>
+                ) : null}
+
+                <button
+                    type="button"
+                    onClick={() => setChatOpen((open) => !open)}
+                    className="fixed bottom-5 left-4 z-[60] inline-flex items-center gap-3 rounded-full bg-[#151614] px-5 py-3 text-sm font-black text-white shadow-[6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5"
+                >
+                    <MessageCircle className="size-5" />
+                    Chat with me
+                </button>
             </main>
         </>
     );

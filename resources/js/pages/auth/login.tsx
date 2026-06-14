@@ -39,7 +39,12 @@ export default function Login({ status, canResetPassword }: Props) {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label
+                                    htmlFor="email"
+                                    className="text-sm font-black text-[#343b32]"
+                                >
+                                    Email address
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -49,17 +54,23 @@ export default function Login({ status, canResetPassword }: Props) {
                                     tabIndex={1}
                                     autoComplete="email"
                                     placeholder="email@example.com"
+                                    className="h-13 rounded-2xl border-[#151614]/15 bg-[#f8f9f6] px-4 font-semibold focus-visible:border-[#151614] focus-visible:ring-[#c6ff4a]/45"
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
+                                    <Label
+                                        htmlFor="password"
+                                        className="text-sm font-black text-[#343b32]"
+                                    >
+                                        Password
+                                    </Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
-                                            className="ml-auto text-sm"
+                                            className="ml-auto text-sm font-black text-[#119f92] no-underline hover:text-[#151614]"
                                             tabIndex={5}
                                         >
                                             Forgot your password?
@@ -73,6 +84,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                     tabIndex={2}
                                     autoComplete="current-password"
                                     placeholder="Password"
+                                    className="h-13 rounded-2xl border-[#151614]/15 bg-[#f8f9f6] px-4 font-semibold focus-visible:border-[#151614] focus-visible:ring-[#c6ff4a]/45"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -82,13 +94,19 @@ export default function Login({ status, canResetPassword }: Props) {
                                     id="remember"
                                     name="remember"
                                     tabIndex={3}
+                                    className="border-[#151614]/25 data-[state=checked]:border-[#151614] data-[state=checked]:bg-[#151614]"
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label
+                                    htmlFor="remember"
+                                    className="text-sm font-bold text-[#4d554c]"
+                                >
+                                    Remember this browser
+                                </Label>
                             </div>
 
                             <Button
                                 type="submit"
-                                className="mt-4 w-full"
+                                className="mt-2 h-13 w-full rounded-full bg-[#151614] text-sm font-black text-white shadow-[6px_6px_0_#c6ff4a] transition hover:-translate-y-0.5 hover:bg-[#151614]"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -99,10 +117,10 @@ export default function Login({ status, canResetPassword }: Props) {
                         </div>
 
                         {/* @chisel-registration */}
-                        <div className="text-center text-sm text-muted-foreground">
-                            Don't have an account?{' '}
+                        <div className="rounded-2xl border border-[#151614]/10 bg-[#f3f5f0] p-4 text-center text-sm font-semibold text-[#5c635b]">
+                            Need another admin account?{' '}
                             <TextLink href={register()} tabIndex={5}>
-                                Sign up
+                                Create one
                             </TextLink>
                         </div>
                         {/* @end-chisel-registration */}
@@ -111,7 +129,7 @@ export default function Login({ status, canResetPassword }: Props) {
             </Form>
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mt-4 rounded-2xl bg-[#eaffb8] px-4 py-3 text-center text-sm font-black text-[#343b32]">
                     {status}
                 </div>
             )}
@@ -120,6 +138,7 @@ export default function Login({ status, canResetPassword }: Props) {
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    title: 'Welcome back',
+    description:
+        'Access the private studio for portfolio projects and site content.',
 };
