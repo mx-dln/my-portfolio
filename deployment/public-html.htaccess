@@ -10,12 +10,15 @@
 ServerSignature Off
 Options -Indexes
 
+RedirectMatch 404 (?i)^/\.git(/|$)
+RedirectMatch 404 (?i)^/\.env($|\.)
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
     # Return a clean 404 for common scanner probes and sensitive files.
-    RewriteRule (^|/)\.env(\.|$) - [R=404,L]
-    RewriteRule (^|/)\.git(/|$) - [R=404,L]
+    RewriteRule ^\.git - [R=404,L]
+    RewriteRule ^\.env($|\.) - [R=404,L]
     RewriteRule ^(composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|pnpm-lock\.yaml)$ - [R=404,L]
     RewriteRule ^(wp-config\.php|config\.php|phpinfo\.php|info\.php|test\.php)$ - [R=404,L]
     RewriteRule ^(backup|backups|api)/?$ - [R=404,L]
