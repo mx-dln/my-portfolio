@@ -7,6 +7,7 @@ import {
     Link2,
     MessageCircle,
     Network,
+    ShieldAlert,
     UserRound,
 } from 'lucide-react';
 import { AdminHero } from './portfolio-shared';
@@ -18,6 +19,7 @@ type Counts = {
     skillGroups: number;
     messages: number;
     visits: number;
+    securityEvents: number;
 };
 
 type PortfolioAdminProps = {
@@ -67,6 +69,12 @@ const adminSections = [
         icon: Activity,
         body: 'View visitor IPs, devices, browsers, countries, cities, and referrers.',
     },
+    {
+        title: 'Security Watch',
+        href: '/admin/security',
+        icon: ShieldAlert,
+        body: 'Monitor scanner probes, suspicious paths, risky methods, and 404 activity.',
+    },
 ];
 
 export default function PortfolioAdmin({ counts }: PortfolioAdminProps) {
@@ -90,7 +98,7 @@ export default function PortfolioAdmin({ counts }: PortfolioAdminProps) {
                         }
                     />
 
-                    <section className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+                    <section className="grid gap-4 md:grid-cols-3 xl:grid-cols-7">
                         {[
                             ['Projects', counts.projects],
                             ['Featured', counts.featured],
@@ -98,6 +106,7 @@ export default function PortfolioAdmin({ counts }: PortfolioAdminProps) {
                             ['Skill groups', counts.skillGroups],
                             ['Messages', counts.messages],
                             ['Visits', counts.visits],
+                            ['Security', counts.securityEvents],
                         ].map(([label, value]) => (
                             <div
                                 key={label}

@@ -14,3 +14,4 @@ deployment:
     - /bin/cp -f $REPOPATH/public/favicon.ico $DEPLOYPATH/favicon.ico || true
     - /bin/cp -f $REPOPATH/public/robots.txt $DEPLOYPATH/robots.txt || true
     - /bin/cp -f $REPOPATH/public/michael-de-leon-resume.pdf $DEPLOYPATH/michael-de-leon-resume.pdf || true
+    - /bin/cp -f $REPOPATH/deployment/public-html.htaccess $DEPLOYPATH/.htaccess

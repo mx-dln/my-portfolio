@@ -8,6 +8,7 @@ import {
     Link2,
     MessageCircle,
     Network,
+    ShieldAlert,
     UserRound,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -65,6 +66,11 @@ const mainNavItems: NavItem[] = [
         title: 'Visitors',
         href: '/admin/visitors',
         icon: Activity,
+    },
+    {
+        title: 'Security Watch',
+        href: '/admin/security',
+        icon: ShieldAlert,
     },
     {
         title: 'View Website',
