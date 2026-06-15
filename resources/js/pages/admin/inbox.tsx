@@ -451,9 +451,9 @@ export default function Inbox({
     return (
         <>
             <Head title="Portfolio Inbox" />
-            <div className="min-h-screen bg-neutral-50 p-4 text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50">
+            <div className="min-h-screen bg-neutral-50 p-3 text-neutral-950 sm:p-4 dark:bg-neutral-950 dark:text-neutral-50">
                 <div className="mx-auto grid max-w-7xl gap-5">
-                    <section className="flex flex-col gap-4 rounded-3xl border border-neutral-200 bg-[#151614] p-6 text-white shadow-sm sm:flex-row sm:items-end sm:justify-between dark:border-neutral-800">
+                    <section className="flex flex-col gap-4 rounded-3xl border border-neutral-200 bg-[#151614] p-5 text-white shadow-sm sm:flex-row sm:items-end sm:justify-between sm:p-6 dark:border-neutral-800">
                         <div>
                             <div className="flex flex-wrap items-center gap-3">
                                 <p className="text-sm font-black tracking-[0.24em] text-[#c6ff4a] uppercase">
@@ -466,7 +466,7 @@ export default function Inbox({
                                     </span>
                                 ) : null}
                             </div>
-                            <h1 className="mt-3 text-4xl leading-[0.96] font-black tracking-[-0.06em] sm:text-6xl">
+                            <h1 className="mt-3 text-3xl leading-[0.96] font-black tracking-[-0.06em] sm:text-6xl">
                                 Client conversations.
                             </h1>
                             <p className="mt-4 max-w-2xl text-base leading-7 text-white/70">
@@ -483,7 +483,7 @@ export default function Inbox({
                         </Link>
                     </section>
 
-                    <section className="grid min-h-[36rem] overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm lg:grid-cols-[22rem_1fr] dark:border-neutral-800 dark:bg-neutral-950">
+                    <section className="grid overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm lg:min-h-[36rem] lg:grid-cols-[22rem_1fr] dark:border-neutral-800 dark:bg-neutral-950">
                         <aside className="border-b border-neutral-200 bg-neutral-50 lg:border-r lg:border-b-0 dark:border-neutral-800 dark:bg-neutral-900">
                             <div className="border-b border-neutral-200 p-4 dark:border-neutral-800">
                                 <p className="text-xs font-black tracking-[0.22em] text-neutral-500 uppercase">
@@ -493,7 +493,7 @@ export default function Inbox({
                                     {inboxConversations.length} total
                                 </p>
                             </div>
-                            <div className="max-h-[36rem] overflow-y-auto p-2">
+                            <div className="flex gap-3 overflow-x-auto p-3 lg:block lg:max-h-[36rem] lg:overflow-y-auto lg:p-2">
                                 {inboxConversations.length ? (
                                     inboxConversations.map((conversation) => {
                                         const latestMessage =
@@ -516,7 +516,7 @@ export default function Inbox({
                                                     )
                                                 }
                                                 className={[
-                                                    'block w-full rounded-2xl border p-4 text-left transition',
+                                                    'block min-w-[17rem] rounded-2xl border p-3 text-left transition lg:w-full lg:min-w-0 lg:p-4',
                                                     active
                                                         ? 'border-neutral-950 bg-white shadow-sm dark:border-lime-300 dark:bg-neutral-950'
                                                         : 'border-transparent hover:border-neutral-200 hover:bg-white dark:hover:border-neutral-800 dark:hover:bg-neutral-950',
@@ -540,7 +540,7 @@ export default function Inbox({
                                                                 'No email provided'}
                                                         </p>
                                                     </div>
-                                                    <span className="text-[0.68rem] font-black text-neutral-400">
+                                                    <span className="shrink-0 text-[0.68rem] font-black whitespace-nowrap text-neutral-400">
                                                         {formatInboxDate(
                                                             conversation.last_message_at ??
                                                                 conversation.created_at,
@@ -565,19 +565,21 @@ export default function Inbox({
                             </div>
                         </aside>
 
-                        <div className="flex min-h-[36rem] flex-col">
+                        <div className="flex min-h-[32rem] flex-col lg:min-h-[36rem]">
                             {activeConversation ? (
                                 <>
-                                    <header className="flex flex-col gap-3 border-b border-neutral-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between dark:border-neutral-800 dark:bg-neutral-950">
-                                        <div>
-                                            <h2 className="text-2xl font-black tracking-[-0.04em]">
+                                    <header className="flex flex-col gap-3 border-b border-neutral-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 dark:border-neutral-800 dark:bg-neutral-950">
+                                        <div className="min-w-0">
+                                            <h2 className="text-2xl font-black tracking-[-0.04em] break-words">
                                                 {activeConversation.visitor_name ||
                                                     'Portfolio visitor'}
                                             </h2>
-                                            <p className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-neutral-500">
-                                                <Mail className="size-4" />
-                                                {activeConversation.visitor_email ||
-                                                    'No email provided'}
+                                            <p className="mt-1 flex min-w-0 items-start gap-2 text-sm font-semibold text-neutral-500">
+                                                <Mail className="mt-0.5 size-4 shrink-0" />
+                                                <span className="min-w-0 break-all">
+                                                    {activeConversation.visitor_email ||
+                                                        'No email provided'}
+                                                </span>
                                             </p>
                                         </div>
                                         <span className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-black text-neutral-500 dark:bg-neutral-900">
@@ -590,7 +592,7 @@ export default function Inbox({
 
                                     <div
                                         ref={threadRef}
-                                        className="flex-1 space-y-4 overflow-y-auto bg-neutral-50 p-5 dark:bg-neutral-900"
+                                        className="flex-1 space-y-4 overflow-y-auto bg-neutral-50 p-3 sm:p-5 dark:bg-neutral-900"
                                     >
                                         {hasOlderMessages[
                                             activeConversation.id
@@ -627,7 +629,7 @@ export default function Inbox({
                                                     >
                                                         <div
                                                             className={[
-                                                                'max-w-[82%] rounded-3xl px-5 py-4 text-sm leading-6 shadow-sm',
+                                                                'max-w-[92%] rounded-3xl px-4 py-3 text-sm leading-6 break-words shadow-sm sm:max-w-[82%] sm:px-5 sm:py-4',
                                                                 visitor
                                                                     ? 'rounded-tl-sm bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100'
                                                                     : 'rounded-tr-sm bg-lime-300 text-neutral-950',
