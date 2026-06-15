@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\PortfolioAdminController;
 use App\Http\Controllers\Admin\PortfolioInboxController;
+use App\Http\Controllers\Admin\PortfolioVisitorController;
 use App\Http\Controllers\PortfolioChatController;
 use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/inbox-feed', [PortfolioInboxController::class, 'feed'])->name('admin.inbox.feed');
     Route::get('admin/inbox-messages/{conversation}', [PortfolioInboxController::class, 'messages'])->name('admin.inbox.messages');
     Route::get('admin/inbox/{conversation?}', PortfolioInboxController::class)->name('admin.inbox');
+    Route::get('admin/visitors', PortfolioVisitorController::class)->name('admin.visitors');
     Route::get('admin/hero', [PortfolioAdminController::class, 'hero'])->name('admin.hero');
     Route::patch('admin/hero', [PortfolioAdminController::class, 'updateHero'])->name('admin.hero.update');
     Route::get('admin/projects', [PortfolioAdminController::class, 'projects'])->name('admin.projects');

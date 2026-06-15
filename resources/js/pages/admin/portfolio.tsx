@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import {
+    Activity,
     ArrowUpRight,
     BriefcaseBusiness,
     FolderKanban,
@@ -16,6 +17,7 @@ type Counts = {
     experiences: number;
     skillGroups: number;
     messages: number;
+    visits: number;
 };
 
 type PortfolioAdminProps = {
@@ -59,6 +61,12 @@ const adminSections = [
         icon: MessageCircle,
         body: 'Read and reply to client messages from the floating chat.',
     },
+    {
+        title: 'Visitors',
+        href: '/admin/visitors',
+        icon: Activity,
+        body: 'View visitor IPs, devices, browsers, countries, cities, and referrers.',
+    },
 ];
 
 export default function PortfolioAdmin({ counts }: PortfolioAdminProps) {
@@ -82,13 +90,14 @@ export default function PortfolioAdmin({ counts }: PortfolioAdminProps) {
                         }
                     />
 
-                    <section className="grid gap-4 md:grid-cols-5">
+                    <section className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
                         {[
                             ['Projects', counts.projects],
                             ['Featured', counts.featured],
                             ['Experience', counts.experiences],
                             ['Skill groups', counts.skillGroups],
                             ['Messages', counts.messages],
+                            ['Visits', counts.visits],
                         ].map(([label, value]) => (
                             <div
                                 key={label}

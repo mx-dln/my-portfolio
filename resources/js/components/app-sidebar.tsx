@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import {
+    Activity,
     BriefcaseBusiness,
     FolderKanban,
     Github,
@@ -59,6 +60,11 @@ const mainNavItems: NavItem[] = [
         title: 'Inbox',
         href: '/admin/inbox',
         icon: MessageCircle,
+    },
+    {
+        title: 'Visitors',
+        href: '/admin/visitors',
+        icon: Activity,
     },
     {
         title: 'View Website',

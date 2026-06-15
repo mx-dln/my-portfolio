@@ -6,13 +6,17 @@ use App\Models\PortfolioExperience;
 use App\Models\PortfolioProfile;
 use App\Models\PortfolioProject;
 use App\Models\PortfolioSkillGroup;
+use App\Services\VisitorTracker;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PortfolioController extends Controller
 {
-    public function __invoke(): Response
+    public function __invoke(Request $request, VisitorTracker $visitorTracker): Response
     {
+        $visitorTracker->record($request);
+
         return Inertia::render('welcome', [
             'profile' => PortfolioProfile::query()->first() ?? $this->fallbackProfile(),
             'projects' => PortfolioProject::query()

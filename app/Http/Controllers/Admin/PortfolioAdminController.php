@@ -8,6 +8,7 @@ use App\Models\PortfolioExperience;
 use App\Models\PortfolioProfile;
 use App\Models\PortfolioProject;
 use App\Models\PortfolioSkillGroup;
+use App\Models\PortfolioVisit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ class PortfolioAdminController extends Controller
                 'experiences' => PortfolioExperience::query()->count(),
                 'skillGroups' => PortfolioSkillGroup::query()->count(),
                 'messages' => PortfolioConversation::query()->count(),
+                'visits' => PortfolioVisit::query()->count(),
             ],
         ]);
     }
