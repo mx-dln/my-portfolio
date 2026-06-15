@@ -11,7 +11,7 @@ Route::get('/', PortfolioController::class)->name('home');
 Route::get('portfolio-chat/{conversation:uuid}', [PortfolioChatController::class, 'show'])->name('portfolio.chat.show');
 Route::post('portfolio-chat', [PortfolioChatController::class, 'store'])->name('portfolio.chat.store');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'portfolio.admin'])->group(function () {
     Route::get('dashboard', [PortfolioAdminController::class, 'index'])->name('dashboard');
     Route::get('admin/inbox-feed', [PortfolioInboxController::class, 'feed'])->name('admin.inbox.feed');
     Route::get('admin/inbox-messages/{conversation}', [PortfolioInboxController::class, 'messages'])->name('admin.inbox.messages');
