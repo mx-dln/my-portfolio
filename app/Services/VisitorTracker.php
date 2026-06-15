@@ -16,7 +16,7 @@ class VisitorTracker
 
     public function record(Request $request): void
     {
-        if ($request->user()) {
+        if ($request->user() !== null) {
             return;
         }
 

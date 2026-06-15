@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     Bot,
     Clock3,
@@ -45,6 +45,22 @@ type RecentVisit = {
     visited_at?: string | null;
 };
 
+type PaginationLink = {
+    url?: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Pagination = {
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
+    total: number;
+    from?: number | null;
+    to?: number | null;
+    links: PaginationLink[];
+};
+
 type VisitorsProps = {
     summary: Summary;
     timeline: GroupItem[];
@@ -53,6 +69,7 @@ type VisitorsProps = {
     devices: GroupItem[];
     browsers: GroupItem[];
     recentVisits: RecentVisit[];
+    pagination: Pagination;
 };
 
 const summaryCards = [
@@ -77,6 +94,12 @@ function formatDate(value?: string | null) {
 
 function maxTotal(items: GroupItem[]) {
     return Math.max(1, ...items.map((item) => item.total));
+}
+
+function pageLabel(label: string) {
+    return label
+        .replace('Previous Previous', 'Previous')
+        .replace('Next Next', 'Next');
 }
 
 function GroupList({
@@ -178,6 +201,7 @@ export default function Visitors({
     devices,
     browsers,
     recentVisits,
+    pagination,
 }: VisitorsProps) {
     return (
         <>
@@ -250,7 +274,9 @@ export default function Visitors({
                                 </h2>
                             </div>
                             <p className="text-sm font-semibold text-neutral-500">
-                                Showing latest {recentVisits.length} visits.
+                                Showing {pagination.from ?? 0}-
+                                {pagination.to ?? 0} of{' '}
+                                {pagination.total.toLocaleString()} visits.
                             </p>
                         </div>
 
@@ -367,6 +393,42 @@ export default function Visitors({
                                 </tbody>
                             </table>
                         </div>
+
+                        {pagination.lastPage > 1 && (
+                            <div className="flex flex-col gap-3 border-t border-neutral-200 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-neutral-800">
+                                <p className="text-sm font-bold text-neutral-500">
+                                    Page {pagination.currentPage} of{' '}
+                                    {pagination.lastPage}
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {pagination.links.map((link, index) =>
+                                        link.url ? (
+                                            <Link
+                                                key={`${link.label}-${index}`}
+                                                href={link.url}
+                                                preserveScroll
+                                                preserveState
+                                                className={[
+                                                    'rounded-full border px-4 py-2 text-sm font-black transition',
+                                                    link.active
+                                                        ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
+                                                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-[#119f92] hover:text-[#119f92] dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-200',
+                                                ].join(' ')}
+                                            >
+                                                {pageLabel(link.label)}
+                                            </Link>
+                                        ) : (
+                                            <span
+                                                key={`${link.label}-${index}`}
+                                                className="rounded-full border border-neutral-200 bg-neutral-100 px-4 py-2 text-sm font-black text-neutral-400 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-600"
+                                            >
+                                                {pageLabel(link.label)}
+                                            </span>
+                                        ),
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </section>
                 </div>
             </div>

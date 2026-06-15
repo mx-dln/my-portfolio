@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PortfolioVisit;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,6 +13,11 @@ class PortfolioVisitorController extends Controller
 {
     public function __invoke(): Response
     {
+        $visits = PortfolioVisit::query()
+            ->latest('visited_at')
+            ->paginate(15)
+            ->withQueryString();
+
         return Inertia::render('admin/visitors', [
             'summary' => $this->summary(),
             'timeline' => $this->timeline(),
@@ -19,7 +25,8 @@ class PortfolioVisitorController extends Controller
             'topCities' => $this->topGroup('city', 8),
             'devices' => $this->topGroup('device_type', 6),
             'browsers' => $this->topGroup('browser', 6),
-            'recentVisits' => $this->recentVisits(),
+            'recentVisits' => $this->recentVisits($visits),
+            'pagination' => $this->pagination($visits),
         ]);
     }
 
@@ -104,12 +111,10 @@ class PortfolioVisitorController extends Controller
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function recentVisits(): array
+    private function recentVisits(LengthAwarePaginator $visits): array
     {
-        return PortfolioVisit::query()
-            ->latest('visited_at')
-            ->limit(80)
-            ->get()
+        return $visits
+            ->getCollection()
             ->map(fn (PortfolioVisit $visit): array => [
                 'id' => $visit->id,
                 'ip_address' => $visit->ip_address,
@@ -131,5 +136,40 @@ class PortfolioVisitorController extends Controller
                 'visited_at' => $visit->visited_at?->toISOString(),
             ])
             ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function pagination(LengthAwarePaginator $visits): array
+    {
+        return [
+            'currentPage' => $visits->currentPage(),
+            'lastPage' => $visits->lastPage(),
+            'perPage' => $visits->perPage(),
+            'total' => $visits->total(),
+            'from' => $visits->firstItem(),
+            'to' => $visits->lastItem(),
+            'links' => collect($visits->linkCollection())
+                ->map(fn (array $link): array => [
+                    'url' => $link['url'],
+                    'label' => $this->paginationLabel((string) $link['label']),
+                    'active' => (bool) $link['active'],
+                ])
+                ->values()
+                ->all(),
+        ];
+    }
+
+    private function paginationLabel(string $label): string
+    {
+        return str($label)
+            ->replace('&laquo;', 'Previous')
+            ->replace('&raquo;', 'Next')
+            ->replace('pagination.previous', 'Previous')
+            ->replace('pagination.next', 'Next')
+            ->stripTags()
+            ->trim()
+            ->toString();
     }
 }

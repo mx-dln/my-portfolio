@@ -2,4 +2,12 @@ deployment:
   tasks:
     - export REPOPATH=/home/kaeldeleon0128/repositories/my-portfolio
     - export DEPLOYPATH=/home/kaeldeleon0128/public_html
-    - /bin/cp -R $REPOPATH/public/. $DEPLOYPATH
+    - /bin/mkdir -p $DEPLOYPATH/build
+    - /bin/cp -R $REPOPATH/public/build/. $DEPLOYPATH/build
+    - /bin/mkdir -p $DEPLOYPATH/assets
+    - /bin/cp -R $REPOPATH/public/assets/. $DEPLOYPATH/assets
+    - /bin/mkdir -p $DEPLOYPATH/storage
+    - /bin/cp -R $REPOPATH/public/storage/. $DEPLOYPATH/storage || true
+    - /bin/cp -f $REPOPATH/public/favicon.ico $DEPLOYPATH/favicon.ico || true
+    - /bin/cp -f $REPOPATH/public/robots.txt $DEPLOYPATH/robots.txt || true
+    - /bin/cp -f $REPOPATH/public/michael-de-leon-resume.pdf $DEPLOYPATH/michael-de-leon-resume.pdf || true
