@@ -6,8 +6,10 @@ deployment:
     - /bin/cp -R $REPOPATH/public/build/. $DEPLOYPATH/build
     - /bin/mkdir -p $DEPLOYPATH/assets
     - /bin/cp -R $REPOPATH/public/assets/. $DEPLOYPATH/assets
-    - /bin/mkdir -p $DEPLOYPATH/storage
-    - /bin/cp -R $REPOPATH/public/storage/. $DEPLOYPATH/storage || true
+    - /bin/rm -rf $DEPLOYPATH/storage
+    - /bin/ln -s $REPOPATH/storage/app/public $DEPLOYPATH/storage
+    - /bin/find $REPOPATH/storage/app/public -type d -exec chmod 755 {} \; || true
+    - /bin/find $REPOPATH/storage/app/public -type f -exec chmod 644 {} \; || true
     - /bin/cp -f $REPOPATH/public/favicon.ico $DEPLOYPATH/favicon.ico || true
     - /bin/cp -f $REPOPATH/public/robots.txt $DEPLOYPATH/robots.txt || true
     - /bin/cp -f $REPOPATH/public/michael-de-leon-resume.pdf $DEPLOYPATH/michael-de-leon-resume.pdf || true
